@@ -16,6 +16,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     # Default path to admin panel:
@@ -25,3 +27,8 @@ urlpatterns = [
 
     # WITH using INCLUDE function we make our main app more independent(независимым) from vote_system project.
 ]
+
+# Когда мы работаем в режиме отладки, нам нужно сэмулировать работу реального рабочего/боевого веб сервера для
+# получения ранее загруженных файлов и передачи их нашему приложению
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
