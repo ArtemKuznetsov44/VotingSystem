@@ -26,13 +26,13 @@ class User(AbstractUser):
     Default fields from AbstractUser:
     * username
     * first_name
-    * second_name
+    * last_name
     * email
     * is_stuff(property)
     * data_joined
     """
 
-    slug = models.SlugField()
+    slug = models.SlugField(db_index=True)
     father_name = models.CharField(max_length=50, blank=False, null=False)
     data_of_birth = models.DateField(null=True, blank=True)
     profile_img = models.ImageField(upload_to=user_profile_img_path, blank=True, null=True)
@@ -195,8 +195,8 @@ class UserResult(models.Model):
     Model for keeping result from current user in voting
     """
 
-    voting = models.OneToOneField(to="Voting", on_delete=models.CASCADE)
-    user = models.OneToOneField(to="User", on_delete=models.CASCADE)
+    voting = models.ForeignKey(to="Voting", on_delete=models.CASCADE)
+    user = models.ForeignKey(to="User", on_delete=models.CASCADE)
     answers = models.JSONField()
 
     class Meta:
@@ -216,7 +216,7 @@ class AnonymResult(models.Model):
     Model for keeping result from current anonym in voting:
     """
 
-    voting = models.OneToOneField(to="Voting", on_delete=models.CASCADE)
+    voting = models.ForeignKey(to="Voting", on_delete=models.CASCADE)
     anonym = models.OneToOneField(to="Anonym", on_delete=models.CASCADE)
     answers = models.JSONField()
 
