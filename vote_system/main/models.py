@@ -34,7 +34,8 @@ class User(AbstractUser):
 
     slug = models.SlugField(db_index=True)
     father_name = models.CharField(max_length=50, blank=False, null=False)
-    data_of_birth = models.DateField(null=True, blank=True)
+    phone = models.CharField(max_length=16, null=True, blank=False)
+    date_of_birth = models.DateField(null=True, blank=False)
     profile_img = models.ImageField(upload_to=user_profile_img_path, blank=True, null=True)
 
     # Extend the base save method - it is called before saving object as record into the database:
@@ -86,7 +87,7 @@ class MembersList(models.Model):
     user = models.ForeignKey(to="User", on_delete=models.CASCADE)
     voting = models.ForeignKey(to="Voting", on_delete=models.CASCADE)
 
-    def __str__(self) -> str:
+    def __str__(self):
         """
         Method to return the title of members list in queries for example instead of id-keys
         :return: title:str
@@ -95,7 +96,7 @@ class MembersList(models.Model):
 
     def save(self, *args, **kwargs):
 
-        if get_object_or_404(User, pk=self.user).is_stuff:
+        if get_object_or_404(User, pk=self.user).is_staff:
             raise ValidationError(
                 message=_("Администратор/сотрудник не может быть избран в качестве участника голосования"),
                 code="invalid")
