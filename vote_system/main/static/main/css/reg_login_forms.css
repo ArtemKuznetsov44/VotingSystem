@@ -17,6 +17,9 @@
     padding-bottom: 10px;
     border-bottom: 2px solid black;
     margin-bottom: 20px;
+    display: flex;
+    text-align: center;
+    justify-content: center;
 }
 
 .super-container .container {

@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    Результаты
+{% endblock title %}
+
+{% block links %}
+     <link type="text/css" href="{% static 'main/css/users_and_bulletins_main.css' %}" rel="stylesheet">
+{% endblock links %}
+
+{% block content %}
+
+    <div class="title">
+        <h2> Результаты </h2>
+    </div>
+
+
+
+    {% if not results %}
+        <div class="empty-content">
+            <img src="{% static 'main/images/empty_content.png' %}" alt="no-content">
+            <h3> На данный момент нет полученных результатов </h3>
+        </div>
+    {% endif %}
+
+
+    {% for result in results %}
+        <a id="link-to-instance" href="{{ result.get_absolute_url }}">
+            <div class="one-instance-card">
+
+                <div class="card-main-info">
+                    <h3> {{ result.title }} </h3>
+                </div>
+
+                <div class="card-time">
+                    <div> Созданы: {{ vote.created_at }}</div>
+                    <div> Обновлено: {{ vote.updated_at }}</div>
+                </div>
+
+            </div>
+        </a>
+    {% endfor %}
+{% endblock content %}
+
+{% block scripts %}
+{% endblock scripts %}

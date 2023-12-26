@@ -1,0 +1,15 @@
+#creation-link {
+    margin-left: 20px;
+    background-color: #212121;
+    color: white;
+    text-decoration: none;
+    padding: 10px 15px 10px 15px;
+    border-radius: 15px;
+}
+
+#creation-link:hover {
+    background-color: var(--hovered-links);
+    transition: 0.3s ease;
+}
+
+

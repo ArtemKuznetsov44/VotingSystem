@@ -2,27 +2,33 @@
 {% load static %}
 
 {% block title %}
-    Регистрация
-{% endblock %}
+    Создание бюллетени
+{% endblock title %}
 
 {% block links %}
-    <link type="text/css" href="{% static 'main/css/reg_login_forms.css' %}" rel="stylesheet">
+    <link type="text/css" href="{% static 'main/css/bulletin_creation.css' %}" rel="stylesheet">
 {% endblock links %}
 
 {% block content %}
-    <div class="container">
 
-        <div class="title">
-            <h2> Регистрация </h2>
-        </div>
+    <div class="title">
+        <h2> Создание новой бюллетени </h2>
+    </div>
 
 
-        {{ form.non_filed_errors }}
-        <form method="post">
-            {% csrf_token %}
+    {{ form.non_filed_errors }}
+    <form method="post">
+        {% csrf_token %}
 
-            {% for field in form %}
-
+        {% for field in form %}
+            {% if forloop.last %}
+                <div class="multiple-choices-field">
+                    <div class="choices-label">
+                        {{ field.label }}
+                    </div>
+                    {{ field }} {{ field.answers }}
+                </div>
+            {% else %}
                 <div class="one-field">
                     {{ field.label }}:
                     {{ field }}
@@ -43,12 +49,22 @@
                         </div>
                     {% endif %}
                 </div>
+            {% endif %}
 
-            {% endfor %}
-            <button id="send" type='submit'> Зарегистрироваться</button>
-        </form>
-        <div class="to-page">
-            <a class="reg-link" href="{% url 'sign_in' %}"> Войти </a>
-        </div>
-    </div>
-{% endblock %}
+
+        {% endfor %}
+
+        <button id="send" type='submit'> Создать</button>
+    </form>
+
+    <a href="#" id="modal-question-add" data-bs-toggle="modal" data-bs-target="#add_question_ajax">
+        Добавить вопрос(-ы)
+    </a>
+
+    {% include 'main/modal_create_question.html' %}
+
+{% endblock content %}
+
+{% block scripts %}
+    <script src="{% static 'main/js/modals.js' %}"></script>
+{% endblock scripts %}

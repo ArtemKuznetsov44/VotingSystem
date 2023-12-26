@@ -2,27 +2,33 @@
 {% load static %}
 
 {% block title %}
-    Регистрация
-{% endblock %}
+    Создание голосования
+{% endblock title %}
 
 {% block links %}
-    <link type="text/css" href="{% static 'main/css/reg_login_forms.css' %}" rel="stylesheet">
+    <link type="text/css" href="{% static 'main/css/voting_creation.css' %}" rel="stylesheet">
 {% endblock links %}
 
 {% block content %}
-    <div class="container">
 
-        <div class="title">
-            <h2> Регистрация </h2>
-        </div>
+    <div class="title">
+        <h2> Создание нового голосования </h2>
+    </div>
 
+    {{ form.non_filed_errors }}
 
-        {{ form.non_filed_errors }}
-        <form method="post">
-            {% csrf_token %}
+    <form method="post">
+        {% csrf_token %}
 
-            {% for field in form %}
-
+        {% for field in form %}
+            {% if forloop.last %}
+                <div class="multiple-choices-field">
+                    <div class="choices-label">
+                        {{ field.label }}
+                    </div>
+                    {{ field }}
+                </div>
+            {% else %}
                 <div class="one-field">
                     {{ field.label }}:
                     {{ field }}
@@ -43,12 +49,12 @@
                         </div>
                     {% endif %}
                 </div>
+            {% endif %}
+        {% endfor %}
 
-            {% endfor %}
-            <button id="send" type='submit'> Зарегистрироваться</button>
-        </form>
-        <div class="to-page">
-            <a class="reg-link" href="{% url 'sign_in' %}"> Войти </a>
-        </div>
-    </div>
-{% endblock %}
+        <button id="send" type='submit'> Создать </button>
+    </form>
+{% endblock content %}
+
+{% block scripts %}
+{% endblock scripts %}

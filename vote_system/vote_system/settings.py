@@ -24,7 +24,7 @@ SECRET_KEY = 'django-insecure-d&&phu2n_8)k+xcz4iuf10hq_tcm)yc^v#)(r(07#i)7vjq_%2
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1']
+ALLOWED_HOSTS = ['127.0.0.1', '172.20.10.6']
 
 AUTH_USER_MODEL = "main.User"
 
@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_extensions',
     # We need to specify name of our application or, and it is better to use,
     # we can specify class - absolute path:
     'main.apps.MainConfig'
@@ -68,6 +69,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'main.context_processor.get_context_data',
             ],
         },
     },

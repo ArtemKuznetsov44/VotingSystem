@@ -24,7 +24,7 @@ class AnonymAdmin(admin.ModelAdmin):
 
 @admin.register(MembersList)
 class MembersListAdmin(admin.ModelAdmin):
-    list_display = ['id', 'title', 'user', 'voting']
+    list_display = ['id', 'user', 'voting']
     list_display_links = ['id']
 
 
@@ -47,12 +47,7 @@ class VotingOptionAdmin(admin.ModelAdmin):
 
 @admin.register(Question)
 class QuestionAdmin(admin.ModelAdmin):
-    list_display = ['id', 'type', 'bulletin']
-
-
-@admin.register(Answer)
-class AnswerAdmin(admin.ModelAdmin):
-    list_display = ['id', 'answer', 'question']
+    list_display = ['id', 'type', 'bulletin', 'answers']
 
 
 @admin.register(QuestionType)
