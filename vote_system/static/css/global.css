@@ -3,4 +3,5 @@
     --main-color: #212121; 
     --hovered-links: #0072c6 !important;
     --footer-color: #212121;
+    --cancel-btn-color: rgba(255, 0, 0, 0.53);
 }

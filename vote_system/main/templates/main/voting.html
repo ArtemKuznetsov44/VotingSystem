@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    Голосования
+{% endblock title %}
+
+{% block links %}
+     <link type="text/css" href="{% static 'main/css/users_and_bulletins_main.css' %}" rel="stylesheet">
+{% endblock links %}
+
+{% block content %}
+    <div class="title">
+        <h2> Голосования </h2>
+        {% if request.user.is_staff %} <a id="creation-link" href="{% url 'voting_create' %}"> Создать </a> {% endif %}
+    </div>
+
+    {% if not voting %}
+        <div class="empty-content">
+            <img src="{% static 'main/images/empty_content.png' %}" alt="no-content">
+            <h3> На данный момент нет созданных голосований </h3>
+        </div>
+    {% endif %}
+
+    {% for vote in voting %}
+        <a id="link-to-instance" href="{{ vote.get_absolute_url }}">
+            <div class="one-instance-card">
+
+                <div class="card-main-info">
+                    <h3> {{ vote.title }} </h3>
+                    <div> Доп. информация: {{ vote.special_info|default:'Отсутсвует' }} </div>
+                    <div> Тип голосования: {% if vote.is_open %} Открытое {% else %} Закрытое {% endif %}</div>
+                </div>
+
+                <div class="card-time">
+                    <div> Создано: {{ vote.created_at }}</div>
+                    <div> Обновлено: {{ vote.updated_at }}</div>
+                </div>
+
+            </div>
+        </a>
+    {% endfor %}
+{% endblock content %}
+
+{% block scripts %}
+{% endblock scripts %}

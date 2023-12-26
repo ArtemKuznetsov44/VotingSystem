@@ -65,6 +65,9 @@ class User(AbstractUser):
 
         return reverse("profile", kwargs={"slug": self.slug})
 
+    def __str__(self):
+        return ' '.join([self.first_name, self.father_name, self.last_name])
+
 
 class Anonym(models.Model):
     """
@@ -83,7 +86,6 @@ class MembersList(models.Model):
     Model for save members for current voting. Can save and keep data only for normal users but not stuff
     """
 
-    title = models.CharField(max_length=150, blank=False, null=False)
     user = models.ForeignKey(to="User", on_delete=models.CASCADE)
     voting = models.ForeignKey(to="Voting", on_delete=models.CASCADE)
 
@@ -121,7 +123,7 @@ class Bulletin(models.Model):
     title = models.CharField(max_length=200, blank=False, null=False)
 
     # Bulletin related key-option to get voting with it (bulletin.voting_set.all() - as example):
-    voting = models.ForeignKey(to="Voting", on_delete=models.CASCADE)
+    voting = models.ForeignKey(to="Voting", on_delete=models.PROTECT, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -132,6 +134,9 @@ class Bulletin(models.Model):
         """
 
         return self.title
+
+    def get_absolute_url(self):
+        return reverse('bulletin', kwargs={'pk': self.pk})
 
 
 class Voting(models.Model):
@@ -170,17 +175,17 @@ class Question(models.Model):
     """
     Model of question. Is has information about question type and bulletin.
     """
-    type = models.ForeignKey(to="QuestionType", on_delete=models.CASCADE)
-    bulletin = models.ForeignKey(to="Bulletin", on_delete=models.CASCADE)
+    question = models.TextField(null=False, blank=False)
+    type = models.ForeignKey(to="QuestionType", on_delete=models.PROTECT)
+    bulletin = models.ForeignKey(to="Bulletin", on_delete=models.PROTECT, null=True, blank=True)
+    answers = models.JSONField(blank=False, null=False)
 
-
-class Answer(models.Model):
-    """
-    Model of answer. It has information about the answer text and question.
-    """
-
-    answer = models.CharField(max_length=100, blank=False, null=False)
-    question = models.ForeignKey(to="Question", on_delete=models.CASCADE)
+    def __str__(self):
+        # result_str =  f'''{self.question}:\n'''
+        # for answer in enumerate(self.answers):
+        #     result_str += f'''{answer}'
+            
+        return self.question
 
 
 class QuestionType(models.Model):
@@ -189,6 +194,9 @@ class QuestionType(models.Model):
     """
 
     type_name = models.CharField(max_length=25, unique=True)
+
+    def __str__(self):
+        return self.type_name
 
 
 class UserResult(models.Model):

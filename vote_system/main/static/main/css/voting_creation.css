@@ -1,0 +1,53 @@
+.super-container form .one-field {
+    margin-bottom: 15px;
+}
+
+.one-field input {
+    height: 40px;
+    border-radius: 10px;
+}
+
+.super-container {
+    display: flex;
+    flex-direction: column;
+    margin-right: 10%;
+    margin-left: 10%;
+}
+
+.title {
+    padding-bottom: 10px;
+    border-bottom: 2px solid black;
+    margin-bottom: 20px;
+    display: flex;
+}
+
+#send {
+    width: 70%;
+    margin: 20px 15% 20px 15%;
+    height: 40px;
+
+
+    background: green;
+    border-radius: 15px;
+    border: none;
+    color: white;
+}
+
+#id_users > div > label {
+    display: flex;
+    align-items: center;
+}
+
+/*#id_users input[type="checkbox"] {*/
+/*    margin-right: 15px;*/
+/*}*/
+
+input[type="checkbox"] {
+    margin-right: 10px;
+    margin-left: 10px;
+}
+
+body > div > form > div:nth-child(4) {
+    display: flex;
+    align-items: center;
+}
