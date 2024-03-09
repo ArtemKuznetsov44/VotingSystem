@@ -1,0 +1,20 @@
+{% load static main_tags %}
+<nav class="navbar" data-bs-theme="dark">
+    <div class="container-fluid d-lg-flex d-block flex-lg-row align-items-lg-center justify-content-start">
+        <div>
+            <a class="navbar-brand" style="display:flex; align-items:center;" {% if request.user.is_authenticated %}
+               href="{% url 'home' %}" {% else %} href="{% url 'start' %}" {% endif %}>
+                <img src="{% static 'images/logo.png' %}" alt="Logo" width="35vw" height="35vh"
+                     class="d-inline-block align-text-top ms-1 me-2"/>
+                СЭГ КГУ
+            </a>
+        </div>
+
+    <!-- If user is authenticated:-->
+        {% if user.is_authenticated %}
+            <!-- User our inclusion tag to display main-menu: -->
+            {% get_menu current_user=user %}
+        {% endif %}
+
+    </div>
+</nav>

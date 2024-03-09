@@ -1,23 +1,32 @@
 nav {
-    top: 0; 
+    top: 0;
     position: fixed !important;
     background-color: var(--nav-color);
     z-index: 5;
-    margin-bottom: 50px;
+    /*margin-bottom: 50px;*/
     width: 100%;
+    grid-row: 1;
 }
-
-.super-container {
-    margin-top: 80px;
+html {
+    min-height: 100vh;
 }
+/*body {*/
+/*    min-height: 100vh;*/
+/*    display: flex;*/
+/*    flex-direction: column;*/
+/*    padding: 0;*/
+/*    overflow-y: auto;*/
+/*    margin: 0 !important;*/
+/*}*/
 
 body {
+    display: grid;
     min-height: 100vh;
-    display: flex;
-    flex-direction: column;
+    grid-template-rows: 100px 1fr 30px;
+    row-gap: 10px;
     padding: 0;
-    overflow-y: auto ;
-    margin: 0 !important;
+    overflow-y: auto;
+    margin:0 !important;
 }
 
 nav li {
@@ -30,7 +39,7 @@ nav a {
 }
 
 nav a:hover {
-    color: var(--hovered-links) !important; 
+    color: var(--hovered-links) !important;
     transition: 0.3s ease;
 }
 
@@ -42,24 +51,22 @@ nav a:hover {
 }
 
 footer {
-    margin-top:auto;
+    grid-row: 3;
     width: 100%;
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    height: 30px;
-    background-color: var(--footer-color); 
-    padding-left: 1%; 
+    background-color: var(--footer-color);
+    padding-left: 1%;
     color: rgba(255, 255, 255, 0.733);
 }
 
 .for-current-user {
     background-color: #212121;
     padding: 3px;
-    border: 0.3px solid rgba(255, 255, 255, 0.726); 
+    border: 0.3px solid rgba(255, 255, 255, 0.726);
     border-radius: 5px;
-    color: white; 
-    padding:1%;
+    color: white;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -67,6 +74,183 @@ footer {
 }
 
 .for-current-user a {
-    margin: 0px 2px 0px 2px;
-    text-wrap: nowrap;
+    margin: 0 2px 0 2px;
+    text-wrap: none;
+}
+
+.super-container {
+    grid-row: 2;
+    margin: 0 10% 20px 10%;
+
+    display: flex;
+    flex-direction: column;
+
+}
+
+.empty-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.empty-content img {
+    max-width: 512px;
+    max-height: 512px;
+}
+
+.title {
+    padding-bottom: 10px;
+    border-bottom: 2px solid black;
+    margin-bottom: 20px;
+    display: flex;
+}
+
+.title > a {
+    margin-left: 20px;
+}
+
+.title.title-center {
+    justify-content: center;
+}
+
+.one-field {
+    margin-bottom: 15px;
+}
+
+.one-field input {
+    height: 40px;
+    border-radius: 10px;
+}
+
+.one-field select {
+    height: 40px;
+    border-radius: 10px;
+}
+
+.send-form-btn, #cancel-btn , .simple-btn , .btn-delete {
+    border-radius: 15px;
+    height: 40px;
+    min-width: 170px;
+    border: none;
+    margin-bottom: 15px;
+    max-width: 170px;
+}
+
+.send-form-btn {
+    background-color: var(--form-send-btn-color);
+    color: white;
+}
+
+#cancel-btn, .btn-delete {
+    background-color: white;
+    color: black;
+}
+
+.send-form-btn:hover {
+    background-color: black;
+    transition: 0.3s ease;
+}
+
+#cancel-btn:hover, .btn-delete:hover {
+    background-color: var(--cancel-btn-color);
+    transition: 0.3s ease;
+    color: white;
+}
+
+.send-form-btn.btn-center {
+    position: relative;
+    left: 50%;
+    transform: translate(-50%);
+}
+
+
+.link-as-btn {
+    padding: 10px 15px 10px 15px;
+    background-color: black;
+    border-radius: 15px;
+    text-decoration: none;
+    color: white;
+    height: 40px;
+}
+
+.link-as-btn:hover, .simple-btn:hover {
+    background-color: var(--hovered-links);
+    transition: 0.3s ease;
+}
+
+.my-question-checkbox {
+    display: none;
+}
+
+.my-question-checkbox-content {
+    cursor: pointer;
+    border-radius: 20px;
+    padding: 15px 10px 15px 10px;
+}
+
+.questions-tag-block > label {
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+
+.my-question-checkbox-content:hover {
+    background-color: var(--hovered-links);
+    transition: 0.3s ease;
+}
+
+
+.my-question-checkbox:checked + .my-question-checkbox-content {
+    background-color: rgba(0, 128, 0, 0.4); /* Цвет фона чекбокса в активном состоянии */
+    transition: 0.3s ease;
+}
+
+.my-question-checkbox:checked + .my-question-checkbox-content:hover {
+    background-color: darkgreen; /* Цвет фона чекбокса в активном состоянии */
+    color: white;
+    transition: 0.3s ease;
+}
+
+.simple-btn {
+    background-color: black;
+    color: white;
+}
+
+.simple-btn.simple-btn-center {
+    position: relative;
+    left: 50%;
+    transform: translate(-50%);
+}
+
+div.modal-content div.modal-body {
+    max-height: 672px;
+    overflow-y: auto;
+}
+
+div.modal-body div.answers-input-container {
+    max-height: 256px;
+    overflow-y: auto;
+}
+
+a.absolute-link-to-instance {
+    text-decoration: none;
+    color: black;
+}
+
+div.empty-queryset {
+    margin-top: 10px;
+    border-radius: 15px;
+    background-color: #171717;
+    color: white;
+    padding: 10px;
+}
+
+ul.errorlist {
+    list-style: none;
+    padding-left: 0;
+    text-align: justify;
+}
+
+div.alert.alert-warning {
+    margin-top: 5px;
 }

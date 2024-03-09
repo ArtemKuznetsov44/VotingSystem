@@ -1,0 +1,11 @@
+.super-container .container {
+    width: 350px;
+    margin: auto;
+}
+
+.to-page {
+    display: flex;
+    justify-content: center;
+}
+
+

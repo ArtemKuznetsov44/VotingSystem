@@ -1,0 +1,55 @@
+<div class="modal fade" id="add_question_ajax" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="exampleModalLabel">Создание вопросов</h3>
+                <button type="button" class="btn-close bg-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="alert alert-danger d-none" role="alert">
+            </div>
+
+            <div class="modal-body">
+
+                <div class="one-form" question="0" style="border-bottom: 2px solid black;">
+
+                    <form action="{% url 'add_question_ajax' %}" method="post" class="add-question-ajax-modal-form" style="margin-left: 10px; margin-right: 10px;">
+
+
+                        {% for field in add_question_ajax %}
+                            <div class="one-field">
+                                {{ field.label }}:
+                                {{ field }}
+                            </div>
+                        {% endfor %}
+
+
+
+                        <div class="form-check form-switch" style="margin-bottom: 15px;">
+                          <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
+                          <label class="form-check-label" for="flexSwitchCheckDefault">Использовать ответы по умолчанию</label>
+                        </div>
+
+                        <button type="button" class="add-new-answer-btn simple-btn" question="0"> Добавить свой ответ</button>
+                        <div class="answers-input-container" style="display: flex; flex-direction: column;"></div>
+
+                    </form>
+                </div>
+
+
+            </div>
+
+            <button class="add-new-question-btn simple-btn simple-btn-center"> Добавить вопрос</button>
+
+            <div class="alert alert-success d-none w-90" role="alert">
+            </div>
+            <div class="modal-footer">
+                <button id="cancel-btn" type="button" data-bs-dismiss="modal" style="padding: 0; margin-bottom: 15px;">Отмена</button>
+                <button class="send-form-btn" style="padding: 0; margin-bottom: 15px;" type="submit">
+                    Создать
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
