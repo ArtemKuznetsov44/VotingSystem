@@ -1,0 +1,22 @@
+{% if questions %}
+    <div class="questions-tag-block">
+        {% for question in questions %}
+            <label class="form-check-label" for="question_id_{{ question.pk }}">
+                <input class="my-question-checkbox" name="questions" type="checkbox"
+                       value="{{ question.pk }}" id="question_id_{{ question.pk }}"
+                       checked>
+                <div class="my-question-checkbox-content">
+                    <h5> {{ question.question }} </h5>
+                    <p> Тип вопроса: {{ question.type|lower }}</p>
+                    <div class="answers">
+                        <ol>
+                            {% for answer in question.answers %}
+                                <li> {{ answer }} </li>
+                            {% endfor %}
+                        </ol>
+                    </div>
+                </div>
+            </label>
+        {% endfor %}
+    </div>
+{% endif %}

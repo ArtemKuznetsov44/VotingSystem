@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    Создание голосования
+{% endblock title %}
+
+{% block links %}
+    <link type="text/css" href="{% static 'main/css/voting_creation.css' %}" rel="stylesheet">
+{% endblock links %}
+
+{% block content %}
+
+    <div class="title">
+        <h2> Создание нового голосования </h2>
+    </div>
+
+    {% if form.non_field_errors %}
+        <div class="alert alert-info alert-dismissible fade show" role="alert">
+            {{ form.non_field_errors }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+
+        {% for field in form %}
+
+            {% if field.name == 'users' and field.field.queryset.count == 0 or field.name == 'bulletins' and field.field.queryset.count == 0 %}
+                <div class="one-field">
+                    {{ field.label }}:
+                    <div class="empty-queryset"> На данный момент нет объектов для назначения 📂</div>
+                </div>
+
+            {% else %}
+                <div class="one-field">
+                    {{ field.label }}:
+                    {{ field }}
+                    {# If field contains errors #}
+                    {% if field.errors %}
+                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                            {{ field.errors }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endif %}
+                </div>
+            {% endif %}
+        {% endfor %}
+        <button id="send" type='submit'> Создать</button>
+    </form>
+{% endblock content %}
+
+{% block scripts %}
+    <script src="{% static 'main/js/voting_creation.js' %}"></script>
+{% endblock scripts %}

@@ -38,6 +38,11 @@
     align-items: center;
 }
 
+#id_bulletins > div > label {
+    display: flex;
+    align-items: center;
+}
+
 /*#id_users input[type="checkbox"] {*/
 /*    margin-right: 15px;*/
 /*}*/

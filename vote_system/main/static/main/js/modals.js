@@ -27,12 +27,45 @@ $(function ($) {
         return cookieValue;
     }
 
+    function add_new_answers(question, current_answers_count, container, count_of_fields, initial=null) {
+
+        for (let i = 1; i <= count_of_fields; i++) {
+
+            let new_one_field_div = $('<div>').addClass('one-field').attr('answer', current_answers_count + i);
+
+            let new_label_for_answer_input = $('<label>').attr('for', current_answers_count + i).text(`Ответ №${current_answers_count + i}:`).prop('required', true).css({
+                'display': 'flex',
+                'flex-direction': 'row',
+                'align-items': 'center',
+                'justify-content': 'space-between'
+            });
+
+
+            let new_input_for_answer = $('<input>').addClass('form-control').attr('name', current_answers_count + i);
+            if (initial != null) {
+                new_input_for_answer.val(initial[i-1])
+            }
+
+            let new_icon_for_answer = $('<svg class="delete-icon" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24"><path fill="currentColor" d="M19 4h-3.5l-1-1h-5l-1 1H5v2h14M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6z"/></svg>')
+
+            new_label_for_answer_input.append(new_icon_for_answer);
+            new_one_field_div.append(new_label_for_answer_input);
+            new_one_field_div.append(new_input_for_answer)
+
+            container.append(new_one_field_div)
+        }
+
+        formAnswers[question]['answers'] += count_of_fields
+    }
+
     // Function is used when user click on "Создать" main button in our modal window:
-    $('#send-data-modal').on('click', function () {
+    $('div.modal-content').on('click', 'div.modal-footer > button.send-form-btn', function () {
+        console.log('button click was')
         let forms_data = [{}];
+        let all_forms = $('div.modal-body').find('form.add-question-ajax-modal-form').length
 
         // We get all forms with specified class and for each form in loop:
-        $('form.add-question-ajax-modal-form').each(function (index, form) {
+        $('div.modal-body').find('form.add-question-ajax-modal-form').each(function (index, form) {
             // Getting the question number from parent for form div element with class <<one-form>>:
             let question_number = parseInt($(form).closest('div.one-form').attr('question'))
             // Getting the data from form as a serialize array. It contains the name and value as pair:
@@ -77,18 +110,50 @@ $(function ($) {
                 console.log('ok - ', response);
                 $('.alert-danger').text('').addClass('d-none')
                 $('.alert-success').text(response.ok).removeClass('d-none')
-                setTimeout(()=>window.location.reload(), 2000)
+                setTimeout(() => window.location.reload(), 2000)
             },
             error: function (response) {
                 console.log('error - ', response);
                 if (response.status === 400) {
                     $('.alert-success').text('').addClass('d-none')
-                    $('.alert-danger').text(response.error).removeClass('d-none')
+                    $('.alert-danger').text(response.responseJSON.error).removeClass('d-none')
                 }
             }
         });
 
     });
+
+    $('div.modal-dialog').on('click', 'svg.delete-icon', function () {
+
+        // Getting the question form instance:
+        const current_question_form = $(this).closest('div.one-form')
+        // Getting the answer container for deleting:
+        let answer_div_container = $(this).closest('div.one-field[answer]')
+
+        // We need to know the div.one-field answer attribute to know the number of deleting answer field:
+        const answer_number_for_deleting = parseInt($(answer_div_container).attr('answer'));
+        // Also we need to find the question number where we delete the answer instance:
+        const question_form_number = parseInt($(current_question_form).attr('question'));
+
+        // Delete current answer div with input and label in it:
+        console.log('element to remove - ', answer_div_container)
+        answer_div_container.remove()
+
+        // Decrease the answers count for current question:
+        formAnswers[question_form_number]['answers'] -= 1;
+        // let new_icon_for_answer = $('<svg class="delete-icon" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24"><path fill="currentColor" d="M19 4h-3.5l-1-1h-5l-1 1H5v2h14M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6z"/></svg>')
+        // Now we need to find all other answers for current question and make the label count and div count -1:
+        current_question_form.find('div.one-field[answer]').each(function (index, container) {
+
+
+            $(container).attr('answer', index + 1)
+            let label = $(container).find('label')
+            label.attr('for', index + 1)
+            label.text(`Ответ №${index + 1}`)
+            label.append('<svg class="delete-icon" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24"><path fill="currentColor" d="M19 4h-3.5l-1-1h-5l-1 1H5v2h14M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6z"></path></svg>')
+            $(container).find('input').attr('name', index + 1)
+        })
+    })
 
 
     // Привязываем обработчик к родительскому элементу, используя делегирование.
@@ -99,37 +164,35 @@ $(function ($) {
         const question_form_number = parseInt($(this).closest('div.one-form').attr('question'));
         console.log('add new answer')
         // We can do this because the value in div.one-form question attribute is the
-        formAnswers[question_form_number ]['answers'] += 1;
+        // formAnswers[question_form_number]['answers'] += 1;
         let answers_count = formAnswers[question_form_number]['answers'];
-
+        console.log('Count of answers - ', answers_count)
+        console.log('Our main variable - ', formAnswers[question_form_number])
 
         // Existing in our form div block which is used like a container for our new inputs for answers:
         let form_answers_container = $(this).next();
+        console.log('Container in normal button -', form_answers_container)
 
-        // Create new div element with class <<one-field>> as a container for input and label:
-        let new_one_field_div = $('<div>').addClass('one-field').attr('answer', answers_count);
-
-        // Create the label and input elements. Input element should contain name, label should contain for with the same value as name for input:
-        let new_label_for_answer_input = $('<label>').attr('for', answers_count).text(`Ответ ${answers_count}:`).
-        prop('required', true).css ({
-            'display': 'flex',
-            'flex-direction': 'row',
-            'align-items': 'center',
-            'justify-content': 'space-between'
-        });
-        let new_input_for_answer = $('<input>').addClass('form-control').attr('name', answers_count);
-        let new_icon_for_answer = $('<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M19 4h-3.5l-1-1h-5l-1 1H5v2h14M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6z"/></svg>')
-
-        // Adding label and input into the new <<one-fild>> div container:
-        new_label_for_answer_input.append(new_icon_for_answer)
-        new_one_field_div.append(new_label_for_answer_input);
-        new_one_field_div.append(new_input_for_answer);
-
-        // Adding the new div.one-field container into the main container for answers:
-        form_answers_container.append(new_one_field_div);
-        // check_answers_count();
+        add_new_answers(question_form_number, answers_count, form_answers_container, 1)
     });
 
+
+    $('div.modal').on('change', 'div.form-check.form-switch input.form-check-input', function() {
+        const def_answers = ['За', 'Против', 'Воздержался']
+        const question_form_number = parseInt($(this).closest('div.one-form').attr('question'));
+        let current_answers_count = formAnswers[question_form_number]['answers']
+        let container = $(this).parent().next().next()
+        console.log('Container in switch - ', container)
+
+        if ($(this).prop('checked')) {
+            add_new_answers(question_form_number, current_answers_count, container, 3, def_answers)
+        } else {
+            let count = container.find('div.one-field').length
+            container.empty()
+            formAnswers[question_form_number]['answers'] -= count
+
+        }
+    })
 
 // Method works when user clicks on button "Добавить вопрос":
     $('button.add-new-question-btn').on('click', function () {

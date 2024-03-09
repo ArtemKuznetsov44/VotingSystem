@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 import os
 from pathlib import Path
 
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -24,9 +25,11 @@ SECRET_KEY = 'django-insecure-d&&phu2n_8)k+xcz4iuf10hq_tcm)yc^v#)(r(07#i)7vjq_%2
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+# Allowed hosts for running our project:
 ALLOWED_HOSTS = ['127.0.0.1', '172.20.10.6']
 
-AUTH_USER_MODEL = "main.User"
+#
+AUTH_USER_MODEL = "users.User"
 
 # Application definition
 
@@ -40,7 +43,8 @@ INSTALLED_APPS = [
     'django_extensions',
     # We need to specify name of our application or, and it is better to use,
     # we can specify class - absolute path:
-    'main.apps.MainConfig'
+    'users.apps.UsersConfig',
+    'main.apps.MainConfig',
 ]
 
 MIDDLEWARE = [
@@ -69,6 +73,11 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                # Here we can enable our own contex processors. Context processor, as we can understand by name,
+                # are used for bring some context data for templates, but such files after its registration here we
+                # can use anywhere we want in our project: By patient, try only to use them in cases when practically
+                # all pages in project should be with context, which context processor provide (just a menu titles
+                # and links, as example).
                 'main.context_processor.get_context_data',
             ],
         },
@@ -134,8 +143,12 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
+# Static prefix for static filed in our project:
 STATIC_URL = 'static/'
 
+# If we need to use not only static files from folders in current apps, we can specify
+# another paths for static files. For example, here I enable static directory for our base.html file.
+# This folder all in all will be the main static files dir for our project after running it not in debug config.
 STATICFILES_DIRS = [
     BASE_DIR / 'static', 
 ]
@@ -145,5 +158,19 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# Main media directory path for our project (not for app, this folder is common for each application):
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+# Media prefix for url:
 MEDIA_URL = '/media/'
+
+# The default url address which is used by django to redirect user after its logout:
+LOGOUT_REDIRECT_URL = 'start'
+LOGIN_URL = 'users:sign_in'
+
+# Authentication backends should be specified in such order: firstly - default backend process, and only after it, we
+# can specify our backend.
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    # Our authentication class. With it, we can be authenticated as user not only by username, but with email too:
+    'users.authentication.EmailAuthBackend'
+]

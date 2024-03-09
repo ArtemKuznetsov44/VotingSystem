@@ -1,12 +1,15 @@
 from django.urls import path
 from .views import *
 
+
+handler403 = ''
+
 urlpatterns = [
     path('', StartPage.as_view(), name='start'),
     path('home/', HomePage.as_view(), name='home'),
 
-    # URLs for Anonymous:
-    path('anonym-connection/', AnonymConnectionPage.as_view(), name='anonym_connection'),
+    # # URLs for Anonymous:
+    # path('anonym-connection/', AnonymConnectionPage.as_view(), name='anonym_connection'),
 
 
     # URLs for Voting:
@@ -18,15 +21,15 @@ urlpatterns = [
 
     # URLs for Users:
     # To see all existing Users in system as list:
-    path('users/', UsersPage.as_view(), name='users'),
-    # To update or have a look the user profile info:
-    path('profile/<slug:slug>', ProfilePage.as_view(), name='profile'),
-    # To sign out from user account:
-    path('sign-out/', UserSingOutPage.as_view(), name='sign_out'),
-    # For registration (new user creation):
-    path('registration/', UserRegistrationPage.as_view(), name='registration'),
-    # For authentication our user in system (to sign in system):
-    path('sign-in/', UserSingInPage.as_view(), name='sign_in'),
+    # path('users/', UsersPage.as_view(), name='users'),
+    # # To update or have a look the user profile info:
+    # path('profile/<slug:slug>', ProfilePage.as_view(), name='profile'),
+    # # To sign out from user account:
+    # path('sign-out/', UserSingOutPage.as_view(), name='sign_out'),
+    # # For registration (new user creation):
+    # path('registration/', UserRegistrationPage.as_view(), name='registration'),
+    # # For authentication our user in system (to sign in system):
+    # path('sign-in/', UserSingInPage.as_view(), name='sign_in'),
 
 
     # URLs for Bulletins:

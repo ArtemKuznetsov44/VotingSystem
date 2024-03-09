@@ -1,0 +1,30 @@
+<div>
+    <button class="navbar-toggler d-lg-none position-absolute" style="top:10px; right: 10px;" type="button"
+            data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav"
+            aria-expanded="false"
+            aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+
+    <div class="collapse navbar-collapse d-lg-flex flex-lg-row" id="navbarNav" style="z-index:9999;">
+        <ul class="navbar-nav d-lg-flex flex-lg-row">
+            {% for el in main_menu %}
+                {% if el.id == selected|default:-1 %}
+                    <li class="nav-item selected">
+                        <a class="nav-link active" href="{% url el.url_name %}"> {{ el.name }}</a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{% url el.url_name %}"> {{ el.name }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+            <div class="for-current-user">
+                <a href="{% url 'users:profile' %}">
+                    {{ user.first_name|default:"Admin" }}
+                    {{ user.father_name|default:"Admin"|first }}.{{ user.last_name|default:"Admin"|first }} </a>
+                <a href="{% url 'users:sign_out' %}"> | Выйти </a>
+            </div>
+
+        </ul>
+    </div>
+</div>
+      

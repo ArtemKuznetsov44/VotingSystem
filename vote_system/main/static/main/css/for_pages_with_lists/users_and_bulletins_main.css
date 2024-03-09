@@ -1,0 +1,48 @@
+.one-instance-card {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    /*border: 2px solid black;*/
+    padding: 10px;
+    border-radius: 20px;
+    margin-bottom: 20px;
+}
+
+.one-instance-card .card-main-info h3:hover {
+    .one-instance-card {
+        background-color: var(--hovered-links);
+        transition: 0.3s ease;
+        border:none;
+        color: white;
+    }
+
+    img {
+        box-shadow: none;
+    }
+}
+
+/*.one-instance-card:hover {*/
+/*    background-color: var(--hovered-links);*/
+/*    transition: 0.3s ease;*/
+/*    border: none;*/
+/*    color: white;*/
+
+/*    img {*/
+/*         box-shadow: none;*/
+/*    }*/
+/*}*/
+
+.one-instance-card img {
+    height: 85px;
+    width: 85px;
+    object-fit: cover;
+    border-radius: 25px;
+    margin-right: 20px;
+    box-shadow: 0 5px 5px gray;
+}
+
+.one-instance-card .card-main-info {
+    display: flex;
+    align-items: center;
+}

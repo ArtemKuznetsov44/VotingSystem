@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    Упс...
+{% endblock title %}
+
+{% block links %}
+    <link type="text/css" href="#" rel="stylesheet">
+{% endblock links %}
+
+{% block content %}
+<h3> К сожалению, в ходе выполнения операция возникла ошибка 😥 </h3>
+<p class="error-page-message"> {{ exception }} </p>
+{% endlock content %}

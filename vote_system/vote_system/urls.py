@@ -22,8 +22,10 @@ from django.conf.urls.static import static
 urlpatterns = [
     # Default path to admin panel:
     path('admin/', admin.site.urls),
+    path('users/', include(('users.urls', 'users'), namespace='users')),
     # Connect all our paths from app - MAIN from file urls.py in this app:
-    path('', include('main.urls'))
+    path('', include('main.urls')),
+
 
     # WITH using INCLUDE function we make our main app more independent(независимым) from vote_system project.
 ]

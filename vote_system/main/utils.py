@@ -1,3 +1,5 @@
+from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
+
 menu = [
     {'id': 1, 'name': 'Голосования', 'url_name': 'voting_all'},
     {'id': 2, 'name': 'Бюллетени', 'url_name': 'bulletins_all'},
@@ -11,3 +13,8 @@ class DataMixin:
         context = kwargs
         context['menu'] = [menu[0], menu[2]] if not self.request.user.is_staff else menu
         return context
+
+
+class StaffRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
+    def test_func(self):
+        return self.request.user.is_staff
