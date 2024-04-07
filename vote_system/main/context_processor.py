@@ -1,10 +1,8 @@
-from .forms import QuestionCreateForm
-
-
+from .forms import AddBulletinForm
 
 
 def get_context_data(request):
     context = {
-        'add_question_ajax': QuestionCreateForm(),
+        'add_bulletin_ajax': AddBulletinForm(),
     }
     return context

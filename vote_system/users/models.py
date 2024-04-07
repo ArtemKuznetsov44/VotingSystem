@@ -36,6 +36,10 @@ class User(AbstractUser):
     profile_img = models.ImageField(upload_to=user_profile_img_path, blank=True, null=True)
     email = models.EmailField(max_length=50, blank=True, null=True, unique=True, db_index=True)
 
+    @staticmethod
+    def get_not_staff_users():
+        return User.objects.filter(is_staff=False)
+
     # Extend the base save method - it is called before saving object as record into the database:
     def save(self, *args, **kwargs):
         """

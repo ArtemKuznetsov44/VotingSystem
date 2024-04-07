@@ -7,6 +7,7 @@ from django.core.validators import MinValueValidator, EmailValidator, MinLengthV
 from .models import *
 from django.forms.widgets import *
 from django.core.exceptions import ValidationError
+from main.models import Anonym
 
 
 class RegistrationForm(UserCreationForm):
@@ -50,9 +51,9 @@ class RegistrationForm(UserCreationForm):
     phone = forms.CharField(
         max_length=16, label='Телефон',
         min_length=16,
-        widget=forms.TextInput(
-            attrs={'class': 'form-control', 'placeholder': '+7-9XX-XX-XX'}
-        )
+        # widget=forms.(
+        #     attrs={'class': 'form-control', 'placeholder': '+7-9XX-XX-XX'}
+        # )
     )
 
     date_of_birth = forms.DateField(
@@ -108,6 +109,20 @@ class SignInForm(AuthenticationForm):
             attrs={'class': 'form-control', 'type': 'password'}
         )
     )
+
+
+class AnonymConnectionForm(forms.ModelForm):
+    class Meta:
+        model = Anonym
+        fields = ('unique_code',)
+        labels = {
+            'unique_code': 'Ваш код'
+        }
+        widgets = {
+            'unique_code': forms.TextInput(
+                attrs={'class': 'form-control'}
+            )
+        }
 
 
 class UserUpdateForm(forms.ModelForm):
@@ -179,67 +194,3 @@ class UserUpdateForm(forms.ModelForm):
         model = get_user_model()
         fields = ['profile_img', 'last_name', 'first_name', 'father_name', 'username', 'phone', 'email',
                   'date_of_birth']
-
-
-# class UserProfilePreviewForm(forms.ModelForm):
-#
-#     first_name = forms.CharField(
-#         max_length=30, label='Имя',
-#         disabled=True,
-#         widget=forms.TextInput(
-#             attrs={'class': 'form-control'}
-#         )
-#     )
-#
-#     last_name = forms.CharField(
-#         max_length=30, label='Фамилия',
-#         disabled=True,
-#         widget=forms.TextInput(
-#             attrs={'class': 'form-control'}
-#         )
-#     )
-#
-#     father_name = forms.CharField(
-#         max_length=30,
-#         label='Отчество',
-#         disabled=True,
-#         widget=forms.TextInput(
-#             attrs={'class': 'form-control'}
-#         )
-#     )
-#
-#     phone = forms.CharField(
-#         max_length=30,
-#         required=True,
-#         disabled=True,
-#         widget=forms.TextInput(
-#             attrs={'class': 'form-control', 'placeholder': '+7-9XX-XX-XX'}
-#         )
-#     )
-#
-#     email = forms.EmailField(
-#         required=False,
-#         disabled=True,
-#         widget=forms.EmailInput(
-#             attrs={'class': 'form-control'}
-#         ),
-#         validators=[EmailValidator(message='Введенный E-mail не валидный')]
-#
-#     )
-#
-#     date_of_birth = forms.DateField(
-#         label='Дата рождения',
-#         required=True,
-#         disabled=True,
-#         widget=DateInput(
-#             attrs={'type': 'date', 'class': 'form-control', 'format': '%d %b %Y',
-#                    'min': '1920-01-01', 'max': date.today().strftime('%Y-%m-%d')}
-#         )
-#
-#     )
-#
-#     class Meta:
-#         model = get_user_model()
-#         fields = ['last_name', 'first_name', 'father_name', 'phone', 'email',
-#                   'date_of_birth', 'is_staff']
-#

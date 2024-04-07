@@ -9,7 +9,7 @@ urlpatterns = [
 
     # URLs for Users:
     # To see all existing Users in system as list:
-    path('all-users/', UsersView.as_view(), name='all-users'),
+    path('all-users/', UsersListView.as_view(), name='all-users'),
     # To update or have a look the user profile info:
     path('profile/', ProfileView.as_view(), name='profile'),
     # path('user-preview/<slug:slug>', OneUserPrevie)

@@ -1,0 +1,42 @@
+.one-instance-card {
+    display:flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 5px;
+    border-radius: 10px;
+    padding: 5px;
+}
+.one-instance-card .main-info {
+    flex: 0.7 0.7;
+}
+.one-instance-card .card-time {
+    flex: 0.2 0.2
+}
+.one-instance-card .start-voting {
+    flex: 0.1 0.1;
+    display: flex;
+    justify-content: center;
+}
+
+a.link-to-instance {
+    color: black;
+}
+
+.one-instance-card {
+    pointer-events: none;
+}
+
+.one-instance-card a.link-to-instance {
+    pointer-events: auto;
+}
+
+.one-instance-card a.link-to-instance:hover {
+    color: white;
+    transition: 0.3s ease;
+}
+
+.one-instance-card:hover {
+    background-color: var(--hovered-links);
+    color: white;
+    transition: 0.3s ease;
+}
