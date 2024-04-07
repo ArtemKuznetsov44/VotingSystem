@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    Голосования
+{% endblock title %}
+
+{% block links %}
+    <link type="text/css" href="{% static 'css/for_list_pages.css' %}" rel="stylesheet">
+{% endblock links %}
+
+{% block content %}
+    <div class="title">
+        <h2> Голосования </h2>
+        {% if request.user.is_staff %} <a class="link-as-btn" href="{% url 'voting-create' %}"> Создать </a> {% endif %}
+    </div>
+
+    {% if not voting %}
+        <div class="empty-content">
+            <img src="{% static 'main/images/empty_content.png' %}" alt="no-content">
+            <h3> На данный момент нет созданных голосований </h3>
+        </div>
+    {% endif %}
+
+    {% for vote in voting %}
+       
+            <div class="one-instance-card">
+                <div class="main-info">
+                    <h5> <a class="link-to-instance" href="{{ vote.get_absolute_url }}">{{ vote.title }}</a> </h5>
+                    <div> Доп. описание: {{ vote.description|default:'Отсутствует' }}</div>
+                    <div> Тип голосования: {% if vote.is_open %} Открытое {% else %} Закрытое {% endif %}</div>
+                </div>
+                <div class="card-time">
+                    <div> Создано: {{ vote.created_at }}</div>
+                    <div> Обновлено: {{ vote.updated_at }}</div>
+                </div>
+                <div class="start-voting">
+                    <a href="#" class="link-as-btn"> Начать </a>
+                </div>
+
+                {#                <div class="one-instance-info">#}
+                {#                    <div class="card-main-info">#}
+                {#                        <h3> {{ vote.title }} </h3>#}
+                {#                        <div> Доп. описание: {{ vote.description|default:'Отсутсвует' }} </div>#}
+                {#                        <div> Тип голосования: {% if vote.is_open %} Открытое {% else %} Закрытое {% endif %} </div>#}
+                {#                    </div>#}
+                {##}
+                {#                    <div class="card-time">#}
+                {#                        <div> Создано: {{ vote.created_at }}</div>#}
+                {#                        <div> Обновлено: {{ vote.updated_at }}</div>#}
+                {#                    </div>#}
+                {#                </div>#}
+                {#                #}
+              
+
+            </div>
+   
+    {% endfor %}
+{% endblock content %}
+
+{% block scripts %}
+{% endblock scripts %}

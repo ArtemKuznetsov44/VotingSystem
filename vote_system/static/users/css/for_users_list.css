@@ -1,0 +1,27 @@
+.one-instance-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 5px;
+    padding: 5px;
+}
+
+.one-instance-card .card-main-info {
+    display: flex;
+    align-items: center;
+}
+
+.card-main-info img{
+    max-width: 80px;
+    max-height: 80px;
+    object-fit: contain;
+    margin-right: 1em;
+    border-radius: 10px;
+}
+
+.one-instance-card .control-user-panel {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+}
+

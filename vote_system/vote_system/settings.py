@@ -12,7 +12,6 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 import os
 from pathlib import Path
 
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -34,6 +33,7 @@ AUTH_USER_MODEL = "users.User"
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -84,6 +84,7 @@ TEMPLATES = [
     },
 ]
 
+ASGI_APPLICATION = 'vote_system.asgi.application'
 WSGI_APPLICATION = 'vote_system.wsgi.application'
 
 # Database
@@ -99,7 +100,7 @@ WSGI_APPLICATION = 'vote_system.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'artem',
+        'NAME': 'vote_system',
         'USER': 'artem',
         'PASSWORD': '1802',
         'HOST': 'localhost',
@@ -150,7 +151,7 @@ STATIC_URL = 'static/'
 # another paths for static files. For example, here I enable static directory for our base.html file.
 # This folder all in all will be the main static files dir for our project after running it not in debug config.
 STATICFILES_DIRS = [
-    BASE_DIR / 'static', 
+    BASE_DIR / 'static',
 ]
 
 # Default primary key field type
@@ -174,3 +175,12 @@ AUTHENTICATION_BACKENDS = [
     # Our authentication class. With it, we can be authenticated as user not only by username, but with email too:
     'users.authentication.EmailAuthBackend'
 ]
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [('127.0.0.1', 6379)]
+        }
+    }
+}

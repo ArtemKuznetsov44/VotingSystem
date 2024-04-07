@@ -6,8 +6,8 @@
 {% endblock title %}
 
 {% block links %}
-    {#    <link type="text/css" href="{% static 'main/css/for_pages_with_lists/users.css' %}" rel="stylesheet">#}
-    <link type="text/css" href="{% static 'main/css/for_pages_with_lists/users_and_bulletins_main.css' %}"
+    {#    <link type="text/css" href="{% static 'main/css/for_list_pages/users.css' %}" rel="stylesheet">#}
+    <link type="text/css" href="{% static 'users/css/for_users_list.css' %}"
           rel="stylesheet">
 {% endblock links %}
 
@@ -28,8 +28,8 @@
 
         <div class="one-instance-card">
 
-            <div class="card-main-info">
 
+            <div class="card-main-info">
                 <div class="user-img">
                     <img {% if user.profile_img %} src="{{ user.profile_img.url }}" {% else %}
                                                    src="{% static 'main/images/default_profile_img.png' %}" {% endif %}
@@ -37,28 +37,38 @@
                 </div>
 
                 <div class="title-with-info">
-                    <h4> {{ user.last_name }} {{ user.first_name }} {{ user.father_name }} </h4>
+                    <h5> {{ user.last_name }} {{ user.first_name }} {{ user.father_name }} </h5>
                     <ul class="user-special-info" style="margin-bottom: 0;">
                         <li> Телефон: {{ user.phone }}</li>
                         <li> E-mail: {{ user.email }}</li>
                     </ul>
                 </div>
-
-
             </div>
 
 
             <div class="card-time">
                 Зарегистрирован: {{ user.date_joined }}
+            </div>
+
+            <div class="control-user-panel">
                 <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" number="{{ user.pk }}"
+                    <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault"
+                           number="{{ user.pk }}"
                             {% if user.is_staff %} checked {% endif %}>
                     <label class="form-check-label" for="flexSwitchCheckDefault"> Статус администратора </label>
                 </div>
+                <svg style="margin-top: 5px;" class="delete-icon svg-as-btn-delete"
+                     value="{{ user.pk }}"
+                     xmlns="http://www.w3.org/2000/svg" width="30"
+                     height="30" viewBox="0 0 24 24">
+                    <path fill="currentColor"
+                          d="M19 4h-3.5l-1-1h-5l-1 1H5v2h14M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6z"></path>
+                </svg>
             </div>
-
-
         </div>
+        {% if not forloop.last %}
+        <hr style="width: 98%; margin-left: 1%; margin-right: 1%;"/>
+        {% endif %}
     {% endfor %}
 {% endblock content %}
 

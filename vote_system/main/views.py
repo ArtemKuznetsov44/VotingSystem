@@ -1,63 +1,18 @@
 import json
-import secrets
 
-from django.http import JsonResponse, HttpResponseBadRequest
+from django.http import JsonResponse, HttpResponseBadRequest, HttpResponse, Http404
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.views.generic import View, ListView, CreateView, TemplateView, UpdateView
+from django.db.models import Q
 
+from users.models import User
 from .forms import *
 from .utils import *
 
 
-def create_code(count: int, code_length: int) -> list[str]:
-
-    res_codes = set()
-
-    while len(res_codes) != count:
-        res_codes.add(secrets.token_hex(code_length // 2))
-
-    return [*res_codes]
-
-
-def get_unique_codes(count: int, existing_codes: list[str]) -> list[str]:
-    """
-    Method to get unique codes for Anonymous with checking existing codes
-
-    :param count: int: count of new codes for generating
-    :param existing_codes: list[str]: list of existing codes in our model Anonym (codes of previously created Anonymous)
-    """
-
-    # Model._meta - a good instrument to get data about model structure and model fields:
-    code_length = Anonym._meta.get_field('code').max_length
-
-    # Generate new codes with specified count:
-    new_codes = create_code(count=count, code_length=code_length)
-
-    # Получим индексы new_codes для тех элементов, которые требуется изменить:
-
-    # Getting list of indexes where indexes are for elements in new_codes which already in existing_codes:
-    same_code_indexes = [new_codes.index(code) for code in new_codes if code in existing_codes]
-
-    # So, if same_code_indexes list contains any element - we know that some codes are the same.
-    while not same_code_indexes:
-        # Create new codes by count of same elements:
-        tmp_codes = create_code(len(same_code_indexes), code_length)
-        # In loop, we change the new_codes[index]
-        for index in same_code_indexes:
-            new_codes[index] = tmp_codes.pop(0)
-
-        same_code_indexes = [new_codes.index(code) for code in new_codes if code in existing_codes]
-
-    return new_codes
-
-
-# Create your views here.
-
 class StartPage(View):
-    """
-    Class to display start page
-    """
+    """ Class to display start page with login ways """
 
     def get(self, request):
         if self.request.user and self.request.user.is_authenticated:
@@ -67,185 +22,246 @@ class StartPage(View):
 
 
 class HomePage(LoginRequiredMixin, TemplateView):
-    """
-    Class to display home|start page
-    """
+    """ Class to display home/main page where user is authenticated """
     login_url = reverse_lazy('sign_in')
     template_name = 'main/home.html'
 
 
-class AnonymConnectionPage(View):
-
-    def get(self, request):
-        """_summary_
-
-        :param HttpRequest request: I don't know for what... View already has self.request
-        """
-        pass
-
-    pass
-
-
-class VotingPage(LoginRequiredMixin, ListView):
+class VotingListPage(LoginRequiredMixin, ListView):
+    """ Class to display page with voting list """
     model = Voting
-    template_name = 'main/voting/voting.html'
+    template_name = 'main/voting/voting_list.html'
     context_object_name = 'voting'
 
     def get_queryset(self):
+        """ Method to return voting-objects for staff and non-staff users """
         if self.request.user.is_staff:
             return Voting.objects.all()
 
-        return Voting.objects.filter(memberslist__user=self.request.user)
+        return Voting.objects.filter(userparticipant__user=self.request.user)
 
 
-class VotingCreatePage(StaffRequiredMixin, CreateView):
+class VotingCreationPage(StaffRequiredMixin, CreateView):
     model = Voting
     template_name = 'main/voting/voting_creation.html'
     form_class = VotingCreationForm
+    success_url = reverse_lazy('voting-list')
 
     def form_valid(self, form):
-        cleaned_data = form.cleaned_data
-        new_voting = form.save()
-        if cleaned_data['is_open']:
+        """ Method starts only if the form is valid """
 
-            members: list[MembersList] = []
-            for user in cleaned_data['users']:
-                members.append(MembersList(user=user, voting=new_voting))
+        data = form.cleaned_data
 
-            # Bulk_create() method gives an opportunity to create in one request more than one records in db from
-            MembersList.objects.bulk_create(members)
+        if not data:
+            form.add_error(field=None, error='Системе не удалось получить данные с формы')
+            return super().form_invalid(form=form)
 
-        # Getting the existing codes from Anonym model:
-        existing_anonymous_codes = [*Anonym.objects.all().values_list('code', flat=True)]
+        try:
+            new_voting_obj = Voting.objects.create(
+                url=get_unique_url(data['is_open']),
+                title=data['title'],
+                is_open=data['is_open'],
+                description=data['description']
+            )
 
-        # Getting anonymous cont from form:
-        count_of_anonymous = int(cleaned_data['anonymous'])
+            if not new_voting_obj:
+                raise RuntimeError("При создании объекта голосования произошла ошибка")
 
-        # Initialize new list with fresh and unique codes for creating Anonym-s:
-        new_unique_codes = get_unique_codes(count_of_anonymous, existing_anonymous_codes)
+            bulletins_for_update = data['bulletins']
+            selected_bulletins = bulletins_for_update.update(voting=new_voting_obj)
 
-        list_of_anonymous = []
-        for code in new_unique_codes:
-            list_of_anonymous.append(Anonym(voting=new_voting, code=code))
+            if not selected_bulletins:
+                raise RuntimeError('При назначении бюллетеней для голосования произошла ошибка')
 
-        Anonym.objects.bulk_create(list_of_anonymous)
-        super().form_valid(form)
-        return redirect('voting')
+            if new_voting_obj.is_open:
+                # Create the list of UserParticipant objects:
+                user_participants = [UserParticipant(voting=new_voting_obj, user=user) for user in data['users']]
+                # Use bulk_create method to create new user participants in one request:
+                participants = UserParticipant.objects.bulk_create(user_participants)
+
+                if not participants:
+                    raise RuntimeError('При назначении участников голосования произошла ошибка')
+            else:
+                anonyms = [
+                    Anonym(unique_code=get_unique_code(), voting=new_voting_obj)
+                    for _ in range(data['anonyms'])
+                ]
+
+                anonyms = Anonym.objects.bulk_create(anonyms)
+                if not anonyms:
+                    raise RuntimeError('При назначении/создании анонимных участников произошла ошибка')
+
+            return redirect(self.success_url)
+        except RuntimeError as ex:
+            # form.add_error - method to add errors into form, field=None means that we add non_field error:
+            form.add_error(field=None, error=ex)
+            # Method to render the form with errors (field errors or non_field errors):
+            return super().form_invalid(form=form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['bulletin_form'] = AddBulletinForm()
+        context['bulletins'] = Bulletin.objects.filter(voting__isnull=True)
+        context['method'] = 'create'
+        context['title'] = 'Создание голосования'
+        return context
 
 
-class VotingShowAndUpdatePage(StaffRequiredMixin, UpdateView):
+class VotingShowUpdateAndDeletePage(StaffRequiredMixin, UpdateView):
+    """ View for show and update one voting instance """
     model = Voting
     template_name = 'main/voting/voting_creation.html'
     form_class = VotingCreationForm
+    slug_field = 'url'
+    slug_url_kwarg = 'url'
+    success_url = reverse_lazy('voting-list')
 
+    def get_form(self, form_class=None):
+        """ Return an instance of the form to be used in this view. """
+        form = super().get_form(form_class=self.form_class)
+        form.fields['bulletins'].queryset = Bulletin.objects.filter(Q(voting__isnull=True) | Q(voting=self.object))
+        form.fields['bulletins'].initial = form.fields['bulletins'].queryset.filter(voting=self.object)
+        return form
 
-class BulletinsListPage(StaffRequiredMixin, ListView):
-    model = Bulletin
-    template_name = 'main/bulletins/bulletins.html'
-    context_object_name = 'bulletins'
+    def get_initial(self):
+        """ Return the initial data to use for forms on this view. """
+        initial = super().get_initial()
 
-
-class BulletinShowAndUpdatePage(StaffRequiredMixin, UpdateView):
-    model = Bulletin
-    template_name = 'main/bulletins/bulletin_crud.html'
-    form_class = BulletinForm
+        if self.object.is_open:
+            participants = UserParticipant.objects.filter(voting=self.object)
+            users = [participant.user for participant in participants]
+            initial['users'] = users
+        else:
+            initial['anonyms'] = self.object.anonym_set.all().count()
+            print(initial['anonyms'])
+        return initial
 
     def form_valid(self, form):
-        if 'confirm_update' in self.request.POST:
-            questions = self.request.POST.getlist('questions')
-            self.object = form.save()
+        data = form.cleaned_data
+        try:
+            if not data:
+                raise RuntimeError('Не удалось получить данные с формы')
 
-            # We need to add new added questions which we got in questions and
-            # delete other question were bulletin_id is null:
-            # TODO: Add checking that lst contains any updated objects:
-            if not Question.objects.filter(pk__in=questions, bulletin__isnull=True).update(bulletin=self.object):
-                raise HttpResponseBadRequest(
-                    'Не удалось назначить выбранный вопросы... Пожалуйста, повторите попытку позже')
+            action = self.request.POST.get('action')
 
-            # Other questions which are not in use we need to delete from DATAbase:
-            # In next time, we can add this as a feacher: 
-            Question.objects.filter(bulletin__isnull=True).delete()
+            if not action:
+                raise RuntimeError('Не удалось определить действие для формы')
 
-            # Call the same method from super() class:
-            # It is a good practice when we overwrite the standard methods of any class:
-            super().form_valid(form)
-        elif 'confirm_delete' in self.request.POST:
-            self.object.delete()
+            if action == 'delete':
+                if not self.object.delete():
+                    raise RuntimeError('Произошла ошибка при удалении голосования')
+            elif action == 'update':
+                # If user change the type of voting:
+                if self.object.is_open != data['is_open']:
+                    # In case when our voting was open, but became closed:
+                    if self.object.is_open:
+                        # Need to delete UserParticipants for current voting and create new anonyms for it:
+                        if not self.object.userparticipants_set.delete():
+                            raise RuntimeError('Не удалось переназначить участников для голосования')
 
-        return redirect('bulletins_all')
+                        anonyms = [Anonym(unique_code=get_unique_code(), voting=self.object) for _ in
+                                   range(data['anonyms'])]
+                        if not Anonym.objects.bulk_create(anonyms):
+                            raise RuntimeError('Не удалось переназначить участников для голосования')
+                    else:
+                        # In case when our voting was closed, but became open:
+                        if not self.object.anonym_set.delete():
+                            raise RuntimeError('Не удалось переназначить участников для голосования')
+
+                        participants = [UserParticipant(user=user, voting=self.object) for user in data['users']]
+                        if not UserParticipant.objects.bulk_create(participants):
+                            return RuntimeError('Не удалось переназначить участников для голосования')
+
+                # Get current bulletins objects for voting:
+                current_bulletins = self.object.bulletin_set.all()
+                # If their not equals to new user checkout bulletins:
+                if current_bulletins != data['bulletins']:
+                    # Unbound current bulletins:
+                    res_for_unbound = current_bulletins.update(voting=None)
+                    # And bound new bulletins objects for current voting:
+                    res_for_bound = data['bulletins'].update(voting=self.object)
+                    if not res_for_unbound or not res_for_bound:
+                        raise RuntimeError('Произошла ошибка при попытке переназначения бюллетеней для голосования')
+
+            return redirect(self.success_url)
+
+        except RuntimeError as ex:
+            form.add_error(field=None, error=ex)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        current_bulletin_pk = self.object.pk
-        current_bulletin_title = self.object.title
-        return {**context,
-                'bulletin_id': current_bulletin_pk,
-                'page_title': f'Бюллетень №{current_bulletin_pk}',
-                'second_title': f'Бюллетень №{current_bulletin_pk}. {current_bulletin_title}',
-                'method': 'update_delete'}
+        context['bulletin_form'] = AddBulletinForm()
+        context['method'] = 'update_delete'
+        context['title'] = 'Просмотр/обновление голосования'
+        return context
 
 
-class BulletinCreatePage(StaffRequiredMixin, CreateView):
-    model = Bulletin
-    template_name = 'main/bulletins/bulletin_crud.html'
-    form_class = BulletinForm
+class BulletinsFetchView(View):
+    """ View to work with fetch-request during bulletins creation or deleting """
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        return {**context,
-                'page_title': 'Создание бюллетени',
-                'second_title': 'Создание бюллетени'}
+    def delete(self, request):
+        data = json.loads(request.body)
+        ''' data = {'to_delete': <bulletin_pk/id>:int} '''
+        if not data:
+            return HttpResponseBadRequest('Invalid or no data provided')
 
-    # This method is called when we submit our form and all fields we validated
-    # but our new model instance has not been saved yet:
-    def form_valid(self, form):
-        questions = self.request.POST.getlist('questions')
+        if get_object_or_404(Bulletin, pk=int(data['to_delete'])).delete():
+            return HttpResponse(status=200)
 
-        new_bulletin = form.save()
+        return HttpResponseBadRequest('Error in deleting bulletin')
 
-        # TODO: Add lst variable checking to be sure that update operation was successful !
-        if not Question.objects.filter(pk__in=questions).update(bulletin=new_bulletin):
-            # HttpResponseBadRequest error - it's the 400 code error
-            raise HttpResponseBadRequest(
-                'Не удалось назначить выбранные вопросы... Пожалуйста, повторите попытку позже')
-
-        Question.objects.filter(bulletin__isnull=True).delete()
-
-        return redirect('bulletins_all')
-
-
-class ResultsPage(ListView):
-    pass
-
-
-class AddQuestionAjax(View):
     def post(self, request):
         data = json.loads(request.body)
 
         if not data:
-            return JsonResponse(data={'error': 'Возникла ошибка получения данных...'}, status=400)
+            return JsonResponse(data='No data was received', status=400)
 
-        questions_to_create = []
-        for index, question in enumerate(data):
-            if question['type'] == '' or not question['type'].isdigit():
-                return JsonResponse(data={'error': f'Вопрос под номером {index + 1} не имеет типа вопроса'},
-                                    status=400)
+        bulletins_to_create = []
 
-            if question['question'].strip() == '':
-                return JsonResponse(data={'error': f'Вопрос под номером {index + 1} не имеет заголовка'},
-                                    status=400)
+        for index, bulletin in enumerate(data):
+            if bulletin['type'] == '' or bulletin['type'] not in ['single', 'multiple']:
+                return JsonResponse(
+                    data={'error': f'В бюллетени под номером {index + 1} не указан типа вопроса'},
+                    status=400
+                )
 
-            if not question['answers']:
-                return JsonResponse(data={'error': f'Вопрос под номером {index + 1} не имеет ответов'},
-                                    status=400)
+            if bulletin['question'].strip() == '':
+                return JsonResponse(
+                    data={'error': f'Бюллетень под номером {index + 1} не содержит вопроса'},
+                    status=400
+                )
 
-            questions_to_create.append(
-                Question(type=QuestionType.objects.get(pk=int(question['type'])),
-                         question=question['question'], answers=question['answers'])
+            if not bulletin['answers']:
+                return JsonResponse(
+                    data={'error': f'Бюллетень под номером {index + 1} не имеет ответов'},
+                    status=400
+                )
+
+            # if any([element.strip() for element in bulletin['answers']])
+
+            bulletins_to_create.append(
+                Bulletin(
+                    question=bulletin['question'],
+                    type=bulletin['type']
+                )
             )
 
-        if Question.objects.bulk_create(questions_to_create):
-            return JsonResponse(data={'ok': 'Вопросы были успешно добавлены'}, status=201)
+        created_bulletins = Bulletin.objects.bulk_create(bulletins_to_create)
+
+        answers_to_create = []
+        for bulletin_obj, data_element in zip(created_bulletins, data):
+            # When we need to append list with another list, we should use extend method:
+            answers_to_create.extend(
+                [Answer(text=element, bulletin=bulletin_obj) for element in data_element['answers']])
+
+        created_answers = Answer.objects.bulk_create(answers_to_create)
+
+        if created_answers and created_bulletins:
+            return JsonResponse(data={'ok': 'Бюллетени и ответы к ним были добавлены в базу'}, status=201)
+
+
+class ResultsListPage(StaffRequiredMixin, ListView):
+    pass
 
 
 def handler400(request, exception=None):

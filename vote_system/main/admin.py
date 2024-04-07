@@ -2,51 +2,42 @@ from django.contrib import admin
 from .models import *
 
 
-# Register your models here.
 @admin.register(Anonym)
 class AnonymAdmin(admin.ModelAdmin):
-    list_display = ['id', 'code', 'voting']
+    list_display = ('id', 'unique_code', 'voting')
 
 
-@admin.register(MembersList)
-class MembersListAdmin(admin.ModelAdmin):
-    list_display = ['id', 'user', 'voting']
-    list_display_links = ['id']
-
-
-@admin.register(Bulletin)
-class BulletinAdmin(admin.ModelAdmin):
-    list_display = ['id', 'title', 'voting', 'created_at', 'updated_at']
-    search_fields = ['id', 'title', 'voting']
+@admin.register(UserParticipant)
+class UserParticipantAdmin(admin.ModelAdmin):
+    list_display = ('id', 'voting', 'user')
 
 
 @admin.register(Voting)
 class VotingAdmin(admin.ModelAdmin):
-    list_display = ['id', 'title', 'special_info', 'is_open', 'created_at', 'updated_at', 'options']
-    search_fields = ['id', 'title']
+    list_display = ('id', 'title', 'url', 'is_open', 'description', 'created_at', 'updated_at')
+    list_filter = ('created_at',)
+    list_editable = ('is_open',)
+    search_fields = ('title',)
 
 
-@admin.register(VotingOption)
-class VotingOptionAdmin(admin.ModelAdmin):
-    list_display = ['id', 'options']
+class AnswerInLine(admin.TabularInline):
+    model = Answer
+    extra = 1
 
 
-@admin.register(Question)
-class QuestionAdmin(admin.ModelAdmin):
-    list_display = ['id', 'type', 'bulletin', 'answers']
+@admin.register(Bulletin)
+class BulletinAdmin(admin.ModelAdmin):
+    list_display = ('id', 'voting', 'question', 'type')
+    # As far as I understand, we can use inlines when model in inline has FK to current model.
+    inlines = [AnswerInLine]
 
 
-@admin.register(QuestionType)
-class QuestionTypeAdmin(admin.ModelAdmin):
-    list_display = ['id', 'type_name']
+@admin.register(UserBulletinAnswer)
+class UserResultAnswerAdmin(admin.ModelAdmin):
+    list_display = ('id', 'bulletin', 'user')
 
 
-@admin.register(UserResult)
-class UserResultAdmin(admin.ModelAdmin):
-    list_display = ['id', 'voting', 'user', 'answers']
-    search_fields = ['voting', 'user']
+@admin.register(AnonymBulletinAnswer)
+class AnonymResultAnswerAdmin(admin.ModelAdmin):
+    list_display = ('id', 'bulletin', 'anonym')
 
-
-@admin.register(AnonymResult)
-class AnonymResultAdmin(admin.ModelAdmin):
-    list_display = ['id', 'voting', 'anonym', 'answers']

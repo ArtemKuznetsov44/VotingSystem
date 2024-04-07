@@ -2,8 +2,8 @@
 {% load static %}
 
 {% block title %}
-    Регистрация
-{% endblock %}
+    Анонимное подключение
+{% endblock title %}
 
 {% block links %}
     <link type="text/css" href="{% static 'users/css/reg_and_login.css' %}" rel="stylesheet">
@@ -13,11 +13,11 @@
     <div class="container">
 
         <div class="title title-center">
-            <h2> Регистрация </h2>
+            <h2> Подключение к СЭГ </h2>
         </div>
 
-
-        {% if form.non_field_errors %}
+        <!-- Errors from fields collection displaying -->
+        {% if anonym_connection_form.non_field_errors %}
             <div class="alert alert-info alert-dismissible fade show" role="alert">
                 {{ form.non_field_errors }}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -26,13 +26,10 @@
 
         <form method="post">
             {% csrf_token %}
-
-            {% for field in form %}
-
+            {% for field in anonym_connection_form %}
                 <div class="one-field">
                     {{ field.label }}:
                     {{ field }}
-                    {# If field contains errors #}
                     {% if field.errors %}
                         <div class="alert alert-warning alert-dismissible fade show" role="alert">
                             {{ field.errors }}
@@ -40,16 +37,9 @@
                         </div>
                     {% endif %}
                 </div>
-
             {% endfor %}
-            <button type="submit" class="send-form-btn btn-center"> Зарегистрироваться </button>
+            <button id="send" type='submit' class="send-form-btn btn-center"> Войти</button>
         </form>
-        <div class="to-page">
-            <a class="reg-link" href="{% url 'users:sign_in' %}"> Войти </a>
-        </div>
+    
     </div>
-{% endblock %}
-
-{% block scripts %}
-    <script src="{% static 'users/js/for_users_forms.js' %}"></script>
-{% endblock scripts %}
+{% endblock content %}

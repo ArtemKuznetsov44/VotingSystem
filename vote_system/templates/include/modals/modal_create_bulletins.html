@@ -1,0 +1,69 @@
+<div class="modal fade" id="add_question_ajax" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="exampleModalLabel">Создание бюллетеней</h3>
+                <button type="button" class="btn-close bg-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="alert alert-danger d-none" role="alert">
+                <button type="button" class="btn-close" aria-label="Close">❌</button>
+            </div>
+        
+            <div class="modal-body">
+
+                <div class="one-form" bulletin=0 style="border-bottom: 2px solid black; margin-bottom: 15px;">
+                    <div class="form-title-and-control"
+                         style="display: flex; justify-content: space-between; align-items: center;">
+                        <h5> Бюллетень №1</h5>
+                        <svg class="delete-bulletin-icon svg-as-btn-delete" xmlns="http://www.w3.org/2000/svg" width="30" height="30"
+                             viewBox="0 0 24 24">
+                            <path fill="currentColor"
+                                  d="M19 4h-3.5l-1-1h-5l-1 1H5v2h14M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6z"></path>
+                        </svg>
+                    </div>
+
+
+                    <form action="{% url 'bulletins-operations' %}" method="post"
+                          class="add-question-ajax-modal-form"
+                          style="margin-left: 10px; margin-right: 10px;">
+                    
+                        {% for field in bulletin_form %}
+                            <div class="one-field">
+                                {{ field.label }}:
+                                {{ field }}
+                            </div>
+                        {% endfor %}
+                    
+                        <div class="form-check form-switch" style="margin-bottom: 15px;">
+                            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
+                            <label class="form-check-label" for="flexSwitchCheckDefault">Использовать ответы по
+                                умолчанию</label>
+                        </div>
+
+                        <button type="button" class="add-new-answer-btn simple-btn" bulletin="0"> Добавить свой ответ
+                        </button>
+                        <div class="answers-input-container" style="display: flex; flex-direction: column;"></div>
+
+                    </form>
+                </div>
+  
+
+            </div>
+
+            <button class="add-new-bulletin-btn simple-btn simple-btn-center"> Добавить</button>
+
+            <div class="alert alert-success d-none w-90" role="alert">
+            </div>
+            <div class="modal-footer">
+                <button id="cancel-btn" type="button" data-bs-dismiss="modal" style="padding: 0; margin-bottom: 5px;">
+                    Отмена
+                </button>
+                <button class="send-form-btn" style="padding: 0; margin-bottom: 5px;" type="submit">
+                    Создать
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>

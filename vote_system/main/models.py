@@ -2,177 +2,207 @@ from django.contrib.auth import get_user_model
 from django.db import models
 from django.urls import reverse
 from django.contrib.auth.models import AbstractUser, AbstractBaseUser
+from . import utils
+from django.db import IntegrityError
 
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
 
-
-# Create your models here.
 class Anonym(models.Model):
-    """
-    Model for anonymous records.
-    """
-
-    voting = models.OneToOneField(to="Voting", on_delete=models.CASCADE)
-    code = models.CharField(max_length=15, unique=True, db_index=True)
-
-    def __str__(self):
-        return self.code
-
-
-class MembersList(models.Model):
-    """
-    Model for save members for current voting. Can save and keep data only for normal users but not stuff
-    """
-
-    user = models.ForeignKey(to=get_user_model(), on_delete=models.CASCADE)
-    voting = models.ForeignKey(to="Voting", on_delete=models.CASCADE)
-
-    def __str__(self):
-        """
-        Method to return the title of members list in queries for example instead of id-keys
-        :return: title:str
-        """
-        return self.title
+    """ Anonym model """
+    unique_code = models.CharField(max_length=15, unique=True, db_index=True, blank=True)
+    voting = models.ForeignKey(to='Voting', on_delete=models.CASCADE)
 
     def save(self, *args, **kwargs):
-
-        if get_object_or_404(get_user_model(), pk=self.user).is_staff:
-            raise ValidationError(
-                message=_("Администратор/сотрудник не может быть избран в качестве участника голосования"),
-                code="invalid")
-
-        if not self.title:
-            self.title = f"Голосующие на голосовании №{self.voting}"
-        else:
-            self.title = None
-            self.title = f"Голосующие на голосовании №{self.voting}"
-
-        super().save(*args, **kwargs)
-
-    def get_absolute_url(self):
-        return reverse('members_list', kwargs={'pk': self.pk})
-
-
-class Bulletin(models.Model):
-    """
-    Model for keeping info about bulletins
-    """
-
-    title = models.CharField(max_length=200, blank=False, null=False)
-
-    # Bulletin related key-option to get voting with it (bulletin.voting_set.all() - as example):
-    voting = models.ForeignKey(to="Voting", on_delete=models.PROTECT, blank=True, null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+        """
+        Override save method to control unique code generation process and automize it:
+        """
+        while not self.unique_code:
+            try:
+                self.unique_code = utils.get_unique_code()
+                super(Anonym, self).save(*args, **kwargs)
+            except IntegrityError:
+                self.unique_code = None
 
     def __str__(self):
-        """
-        Method to configure the object string representation as it's title
-        :return:
-        """
-
-        return self.title
-
-    def get_absolute_url(self):
-        return reverse('bulletin', kwargs={'pk': self.pk})
+        return self.unique_code
 
 
-class Voting(models.Model):
-    """
-    Model for keeping info about voting processes
-    """
-
-    # Main voting title
-    title = models.CharField(max_length=200, blank=False, null=False)
-
-    # Field for adding some more info about current voting process. May be used, may not
-    special_info = models.TextField(blank=True, null=True)
-    is_open = models.BooleanField(default=True, null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    options = models.OneToOneField(to="VotingOption", on_delete=models.CASCADE, null=True, blank=True)
-
-    def __str__(self):
-        """
-        Method to configure the object string representation as it's title.
-        :return:
-        """
-
-        return self.title
-
-
-class VotingOption(models.Model):
-    """
-    Simple model just for keeping different options for one voting process
-    """
-
-    options = models.JSONField()
-
-
-class Question(models.Model):
-    """
-    Model of question. Is has information about question type and bulletin.
-    """
-    question = models.TextField(null=False, blank=False)
-    type = models.ForeignKey(to="QuestionType", on_delete=models.PROTECT)
-    bulletin = models.ForeignKey(to="Bulletin", on_delete=models.CASCADE, null=True, blank=True)
-    answers = models.JSONField(blank=False, null=False)
-
-    def __str__(self):
-        # result_str =  f'''{self.question}:\n'''
-        # for answer in enumerate(self.answers):
-        #     result_str += f'''{answer}'
-            
-        return self.question
-
-
-class QuestionType(models.Model):
-    """
-    Model for keeping question types: multiple choice or one choice for now as example.
-    """
-
-    type_name = models.CharField(max_length=25, unique=True)
-
-    def __str__(self):
-        return self.type_name
-
-
-class UserResult(models.Model):
-    """
-    Model for keeping result from current user in voting
-    """
-
-    voting = models.ForeignKey(to="Voting", on_delete=models.CASCADE)
+class UserParticipant(models.Model):
+    """ User as voting participant model """
+    voting = models.ForeignKey(to='Voting', on_delete=models.CASCADE)
     user = models.ForeignKey(to=get_user_model(), on_delete=models.CASCADE)
-    answers = models.JSONField()
 
     class Meta:
-        """
-        Special Meta class for give some extra options to the model:
-
-        * unique_together - option to make voting and user as unique pair
-        """
-
-        # In our DB we could not have two records with the same field values in voting and user
-        # - ONE USER only with ONE RESULT FOR ONE VOTING:
         unique_together = ('voting', 'user')
 
 
-class AnonymResult(models.Model):
-    """
-    Model for keeping result from current anonym in voting:
-    """
+class Voting(models.Model):
+    """ Voting model """
+    url = models.SlugField(unique=True, max_length=120)
+    title = models.TextField()
+    is_open = models.BooleanField(default=True)
+    description = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
-    voting = models.ForeignKey(to="Voting", on_delete=models.CASCADE)
-    anonym = models.OneToOneField(to="Anonym", on_delete=models.CASCADE)
-    answers = models.JSONField()
+    def get_absolute_url(self):
+        return reverse('voting-detail', kwargs={'url': self.url})
+
+    def __str__(self):
+        return f'{self.url} - {self.title}'
+
+
+class Bulletin(models.Model):
+    """ Bulletin model """
+    voting = models.ForeignKey(to='Voting', on_delete=models.CASCADE, null=True)
+    question = models.TextField()
+    type = models.CharField(max_length=8, choices=(('multiple', 'Множественный выбор'), ('single', 'Одиночный ответ')),
+                            default='single')
+
+    # answers = models.ManyToManyField(to='Answer', related_name='bulletin_answers')
+
+    def __str__(self):
+        return self.question
+
+
+class Answer(models.Model):
+    """ Answers for bulletins """
+    text = models.CharField(max_length=120)
+    bulletin = models.ForeignKey(to='Bulletin', on_delete=models.CASCADE)
 
     class Meta:
-        """
-        Special Meta class for give some extra options to the model:
-        * unique_together - options to make voting and anonym as unique pair
-        """
-        unique_together = ('voting', 'anonym')
+        unique_together = ('text', 'bulletin')
+        index_together = ('text', 'bulletin')
+
+
+class UserBulletinAnswer(models.Model):
+    """ User result answer model """
+    bulletin = models.ForeignKey(Bulletin, on_delete=models.CASCADE)
+    user = models.ForeignKey(to=get_user_model(), on_delete=models.CASCADE)
+    answer = models.ForeignKey(to="Answer", on_delete=models.PROTECT)
+
+    class Meta:
+        unique_together = ('bulletin', 'answer')
+
+
+class AnonymBulletinAnswer(models.Model):
+    """ Anonym result answer model """
+    bulletin = models.ForeignKey(to='Bulletin', on_delete=models.CASCADE)
+    anonym = models.ForeignKey(to='Anonym', on_delete=models.CASCADE)
+    answer = models.ForeignKey(to='Answer', on_delete=models.PROTECT)
+
+    class Meta:
+        unique_together = ('bulletin', 'answer')
+
+
+class VotingBulletinResult(models.Model):
+    pass
+
+# class Anonym(models.Model):
+#     """
+#     Model for anonymous records.
+#     """
+#
+#     voting = models.OneToOneField(to="Voting", on_delete=models.CASCADE)
+#     code = models.CharField(max_length=15, unique=True, db_index=True)
+#
+#     def __str__(self):
+#         return self.code
+#
+#
+# class Member(models.Model):
+#     """
+#     Model for save members for current voting. Can save and keep data only for normal users but not stuff
+#     """
+#
+#     user = models.ForeignKey(to=get_user_model(), on_delete=models.CASCADE)
+#     voting = models.ForeignKey(to="Voting", on_delete=models.CASCADE)
+#
+#     def __str__(self):
+#         """
+#         Method to return the title of members list in queries for example instead of id-keys
+#         :return: title:str
+#         """
+#         return self.title
+#
+#     def save(self, *args, **kwargs):
+#
+#         if get_object_or_404(get_user_model(), pk=self.user).is_staff:
+#             raise ValidationError(
+#                 message=_("Администратор/сотрудник не может быть избран в качестве участника голосования"),
+#                 code="invalid")
+#
+#         if not self.title:
+#             self.title = f"Голосующие на голосовании №{self.voting}"
+#         else:
+#             self.title = None
+#             self.title = f"Голосующие на голосовании №{self.voting}"
+#
+#         super().save(*args, **kwargs)
+#
+#     def get_absolute_url(self):
+#         return reverse('members_list', kwargs={'pk': self.pk})
+#
+#     class Meta:
+#         unique_together = ('user', 'voting')
+#
+#
+# class Bulletin(models.Model):
+#     """
+#     Bulletin class - Bulletin in ONE direct question instance!
+#     """
+#     voting = models.ForeignKey(to='Voting', on_delete=models.CASCADE)
+#     question = models.TextField()
+#     type = models.CharField(max_length=8, choices=('multiple', 'single'), default='single')
+#     # TODO: Maybe, here its better to use many to many field
+#     answers = models.ManyToManyField(to='Answer', on_delete=models.CASCADE, related_name='bulletin_answers')
+#
+#     def __str__(self):
+#         return self.question
+#
+#
+# class Answer(models.Model):
+#     number = models.PositiveIntegerField()
+#     text = models.CharField(max_length=250)
+#
+#     def __str__(self):
+#         return self.text
+#
+#
+# class Voting(models.Model):
+#     """
+#     Voting class - Voting for db, is a binding instance.
+#     Every bulletin know about it's voting.
+#     Every member knows about his voting.
+#     Every anonym knows about his voting.
+#     """
+#
+#     title = models.TextField()
+#     description = models.TextField(blank=True, null=True)
+#     is_open = models.BooleanField(default=True)
+#     created_at = models.DateTimeField(auto_now_add=True)
+#     updated_at = models.DateTimeField(auto_now=True)
+#     options = models.JSONField(blank=True, null=True)
+#
+#     def __str__(self):
+#         return self.title
+#
+#
+# class AnonymResult(models.Model):
+#     """
+#     Model for keeping result from current anonym in voting:
+#     """
+#
+#     bulletin = models.ForeignKey(to='Bulletin', on_delete=models.CASCADE, related_name='')
+#     anonym = models.OneToOneField(to="Anonym", on_delete=models.CASCADE)
+#     answers = models.ManyToManyField(to='Answer', on_delete=models.CASCADE)
+#
+#     class Meta:
+#         """
+#         Special Meta class for give some extra options to the model:
+#         * unique_together - options to make voting and anonym as unique pair
+#         """
+#         unique_together = ('bulletin', 'anonym')

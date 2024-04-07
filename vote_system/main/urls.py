@@ -14,11 +14,12 @@ urlpatterns = [
 
     # URLs for Voting:
     # To see all existing Voting in system as list:
-    path('voting/', VotingPage.as_view(), name='voting_all'),
-    path('voting/creation/', VotingCreatePage.as_view(), name='voting_create'),
-    path('voting/detail_id_<int:pk>/', VotingShowAndUpdatePage.as_view(), name='voting'),
+    path('voting/', VotingListPage.as_view(), name='voting-list'),
+    path('voting-create/', VotingCreationPage.as_view(), name='voting-create'),
+    # path('voting/creation/', VotingCreatePage.as_view(), name='voting_create'),
+    path('voting-view/<slug:url>/', VotingShowUpdateAndDeletePage.as_view(), name='voting-detail'),
 
-
+    path('results/', ResultsListPage.as_view(), name='results-list'),
     # URLs for Users:
     # To see all existing Users in system as list:
     # path('users/', UsersPage.as_view(), name='users'),
@@ -34,17 +35,12 @@ urlpatterns = [
 
     # URLs for Bulletins:
     # To see all existing bulletins:
-    path('bulletins/', BulletinsListPage.as_view(), name='bulletins_all'),
+    # path('bulletins/', BulletinsListPage.as_view(), name='bulletins-list'),
     # Look and update bulletin:
-    path('bulletins/detail_for=<int:pk>/', BulletinShowAndUpdatePage.as_view(), name='bulletin'),
+    # path('bulletins/detail_for=<int:pk>/', BulletinShowAndUpdatePage.as_view(), name='bulletin'),
     # For bulletin creation:
-    path('bulletins/create/', BulletinCreatePage.as_view(), name='bulletin_create'),
+    # path('bulletins/create/', BulletinCreatePage.as_view(), name='bulletin_create'),
 
-
-    # URLs for results:
-    path('results/', ResultsPage.as_view(), name='results'),
-
-
-    # URLs for ajax handlers views:
-    path('add_question_ajax/', AddQuestionAjax.as_view(), name='add_question_ajax')
+    # URLs for fetch/ajax actions:
+    path('bulletins-operations/', BulletinsFetchView.as_view(), name='bulletins-operations')
 ]

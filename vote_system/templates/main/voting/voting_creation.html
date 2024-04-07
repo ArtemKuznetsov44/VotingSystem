@@ -2,17 +2,22 @@
 {% load static %}
 
 {% block title %}
-    Создание голосования
+    {{ title }}
 {% endblock title %}
 
 {% block links %}
     <link type="text/css" href="{% static 'main/css/voting_creation.css' %}" rel="stylesheet">
+    <style>
+        #is-open-switch {
+            margin-left: 10px; /* Расстояние между меткой и переключателем */
+        }
+    </style>
 {% endblock links %}
 
 {% block content %}
 
     <div class="title">
-        <h2> Создание нового голосования </h2>
+        <h2> {{ title }} </h2>
     </div>
 
     {% if form.non_field_errors %}
@@ -22,35 +27,140 @@
         </div>
     {% endif %}
 
-    <form method="post">
+    <form method="post" id="voting-form">
         {% csrf_token %}
 
-        {% for field in form %}
-
-            {% if field.name == 'users' and field.field.queryset.count == 0 or field.name == 'bulletins' and field.field.queryset.count == 0 %}
-                <div class="one-field">
-                    {{ field.label }}:
-                    <div class="empty-queryset"> На данный момент нет объектов для назначения 📂</div>
-                </div>
-
-            {% else %}
-                <div class="one-field">
-                    {{ field.label }}:
-                    {{ field }}
-                    {# If field contains errors #}
-                    {% if field.errors %}
-                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                            {{ field.errors }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    {% endif %}
+        <!-- TITLE -->
+        <div class="one-field">
+            <label for="{{ form.title.id_for_label }}"> {{ form.title.label }}: </label>
+            {{ form.title }}
+            {% if form.title.errors %}
+                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    {{ form.title.errors }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             {% endif %}
-        {% endfor %}
-        <button id="send" type='submit'> Создать</button>
+        </div>
+
+        <!-- DESCRIPTION -->
+        <div class="one-field">
+            <label for="{{ field.description.id_for_label }}"> {{ form.description.label }}: </label>
+            {{ form.description }}
+            {% if for.title.errors %}
+                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    {{ form.description.errors }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- IS_OPEN -->
+        <div class="form-switch" style="min-width: 100%; display: flex; padding: 0; margin-bottom: 15px;">
+            {{ form.is_open.label }}
+            {{ form.is_open }}
+        </div>
+
+        <!-- USERS -->
+        <div class="one-field box-for-users" {% if not form.is_open.value %} hidden {% endif %}>
+            {% if form.users.field.queryset.count == 0 %}
+                <div class="empty-content"> На данный момент нет объектов для добавления 📂</div>
+            {% else %}
+                <label class="form-check-label" for="{{ form.users.id_for_label }}"> {{ form.users.label }}:</label>
+                {{ form.users }}
+            {% endif %}
+        </div>
+
+        <!-- ANONYMS -->
+        <div class="one-field box-for-anonyms" {% if form.is_open.value %} hidden {% endif %}>
+            <label for="{{ form.anonyms.id_for_label }}">{{ form.anonyms.label }}</label>
+            {{ form.anonyms }}
+            <p class="current-range-value"> Количество: {{ form.anonyms.initial }} </p>
+        </div>
+
+
+        <!-- BULLETINS -->
+        <fieldset>
+            <div class="fieldset-header">
+                <legend> Выберете бюллетени для голосования</legend>
+                <!-- Code with button to call the modal window-->
+                <div style="margin-bottom: 15px; padding-top: 10px;">
+                    <a href="#" class="" style="" id="modal-question-add" data-bs-toggle="modal"
+                       data-bs-target="#add_question_ajax">
+                        <svg class="svg-as-btn-normal" xmlns="http://www.w3.org/2000/svg" width="30" height="30"
+                             viewBox="0 0 24 24">
+                            <path fill="black"
+                                  d="M7.5 10.75a.75.75 0 1 1 1.5 0a.75.75 0 0 1-1.5 0m.75 4.75a.75.75 0 1 0 0 1.5a.75.75 0 0 0 0-1.5M3 6.25A3.25 3.25 0 0 1 6.25 3h11.5A3.25 3.25 0 0 1 21 6.25v5.772a6.463 6.463 0 0 0-3.048-1.007A.749.749 0 0 0 17.25 10h-4.5a.75.75 0 0 0 0 1.5h2.246a6.502 6.502 0 0 0-2.974 9.5H6.25A3.25 3.25 0 0 1 3 17.75zm3 4.5a2.25 2.25 0 1 0 4.5 0a2.25 2.25 0 0 0-4.5 0M8.25 14a2.25 2.25 0 1 0 0 4.5a2.25 2.25 0 0 0 0-4.5M6 6.25c0 .414.336.75.75.75h10.5a.75.75 0 0 0 0-1.5H6.75a.75.75 0 0 0-.75.75M23 17.5a5.5 5.5 0 1 0-11 0a5.5 5.5 0 0 0 11 0m-5 .5l.001 2.503a.5.5 0 1 1-1 0V18h-2.505a.5.5 0 0 1 0-1H17v-2.5a.5.5 0 1 1 1 0V17h2.497a.5.5 0 0 1 0 1z"></path>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+            <div class="bulletins-for-select">
+                <div class="empty-content" {% if form.bulletins.field.queryset %} hidden {% endif %}>
+                    <img src="/static/main/images/empty_content.png" alt="no-content">
+                    <h3> На данный момент нет созданных/назначенных бюллетеней </h3>
+                </div>
+
+                {% for bulletin in form.bulletins.field.queryset %}
+                    <div class="one-row" style="display: flex; justify-content: space-between;">
+                        {% if bulletin in form.bulletins.initial %}
+                            <label style="flex: 1 1; background-color: lightgreen;">
+                            <input type="checkbox" name="bulletins" value="{{ bulletin.id }}" hidden checked>
+                        {% else %}
+                            <label style="flex: 1 1; background-color: white;">
+                            <input type="checkbox" name="bulletins" value="{{ bulletin.id }}" hidden>
+                        {% endif %}
+                        <div class="one-bulletin">
+                            <div style="font-weight: bold;"> {{ bulletin.question }}</div>
+                            <div style="font-style: italic;">
+                                {% if bulletin.type == 'single' %}
+                                    Одиночный ответ
+                                {% else %}
+                                    Множественный выбор
+                                {% endif %}
+                            </div>
+                            <div>
+                                <ol>
+                                    {% for answer in bulletin.answer_set.all %}
+                                        <li> {{ answer.text }}</li>
+                                    {% endfor %}
+                                </ol>
+                            </div>
+                        </div>
+                        </label>
+
+                        <svg style="margin-top: 5px;" class="delete-icon svg-as-btn-delete"
+                             value="{{ bulletin.id }}"
+                             xmlns="http://www.w3.org/2000/svg" width="25"
+                             height="25" viewBox="0 0 24 24">
+                            <path fill="currentColor"
+                                  d="M19 4h-3.5l-1-1h-5l-1 1H5v2h14M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6z"></path>
+                        </svg>
+
+                    </div>
+                {% endfor %}
+            </div>
+
+        </fieldset>
+
+
     </form>
+    {% if method == 'create' %}
+        <button class="send-form-btn btn-center" form="voting-form" type='submit'> Создать голосование</button>
+    {% elif method == 'update_delete' %}
+        <div class="buttons-container" style="display: flex; align-content: center; justify-content: center; gap: 2em;">
+            <button class="send-form-btn" form="voting-form" type="submit" name="action" value="update"> Сохранить
+            </button>
+            <button class="send-form-btn btn-delete" form="voting-form" type="submit" name="action" value="delete">
+                Удалить
+            </button>
+        </div>
+    {% endif %}
+
+    {% include 'include/modals/modal_create_bulletins.html' %}
 {% endblock content %}
 
 {% block scripts %}
+    <script src="{% static 'main/js/modal_bulletin_creation.js' %}"></script>
     <script src="{% static 'main/js/voting_creation.js' %}"></script>
 {% endblock scripts %}
+

@@ -4,7 +4,7 @@ from django.contrib.auth.views import LogoutView, LoginView
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views import View
-from django.views.generic import CreateView, UpdateView, ListView, DetailView
+from django.views.generic import CreateView, UpdateView, ListView, DetailView, TemplateView
 from .forms import *
 
 
@@ -47,7 +47,7 @@ class ProfileView(LoginRequiredMixin, UpdateView):
         return reverse_lazy('users:profile')
 
 
-class UsersView(LoginRequiredMixin, ListView):
+class UsersListView(LoginRequiredMixin, ListView):
     model = get_user_model()
     template_name = 'users/users/users.html'
     context_object_name = 'users'
@@ -68,4 +68,23 @@ class UsersView(LoginRequiredMixin, ListView):
 #     form_class =
 
 class AnonymousConnectionView(View):
-    pass
+    def get(self, request):
+        return render(
+            request=request,
+            template_name='users/start_reg_auth/anonym_login.html',
+            context={'anonym_connection_form': AnonymConnectionForm()}
+        )
+
+    def post(self, request):
+        code = request.POST.get('unique_code', None)
+        if code:
+            anonym_obj = Anonym.objects.get(unique_code=code)
+            if anonym_obj:
+                voting_obj = Voting.objects.get(pk=anonym_obj.voting.pk).url
+
+
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['anonym_connection_form'] = AnonymConnectionForm()
+        return context
