@@ -56,7 +56,7 @@ footer {
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    background-color: var(--footer-color);
+    background-color: var(--nav-color);
     padding-left: 1%;
     color: rgba(255, 255, 255, 0.733);
 }
@@ -100,7 +100,7 @@ footer {
 
 .title {
     padding-bottom: 10px;
-    border-bottom: 2px solid black;
+    border-bottom: 2px solid var(--nav-color);
     margin-bottom: 20px;
     display: flex;
 }
@@ -116,11 +116,14 @@ footer {
 .one-field {
     margin-bottom: 15px;
 }
-
-.one-field input {
-    height: 40px;
-    border-radius: 10px;
+.one-field label {
+    margin-bottom: 0.5em;
 }
+
+/*.one-field input {*/
+/*    height: 40px;*/
+/*    border-radius: 10px;*/
+/*}*/
 
 .one-field select {
     height: 40px;
@@ -147,7 +150,7 @@ footer {
 }
 
 .send-form-btn:hover {
-    background-color: black;
+    background-color: var(--nav-color);
     transition: 0.3s ease;
 }
 
@@ -167,11 +170,14 @@ footer {
 
 .link-as-btn {
     padding: 10px 15px 10px 15px;
-    background-color: black;
+    background-color: var(--nav-color);
     border-radius: 15px;
     text-decoration: none;
     color: white;
+    display: flex;
     height: 40px;
+    align-items: center;
+    justify-content: center;
 }
 
 .link-as-btn:hover, .simple-btn:hover {
@@ -223,7 +229,7 @@ footer {
 }
 
 .simple-btn {
-    background-color: black;
+    background-color: var(--nav-color);
     color: white;
 }
 
@@ -254,7 +260,7 @@ a.absolute-link-to-instance {
 div.empty-queryset {
     margin-top: 10px;
     border-radius: 15px;
-    background-color: #171717;
+    background-color: var(--nav-color);
     color: white;
     padding: 10px;
 }
@@ -263,8 +269,13 @@ ul.errorlist {
     list-style: none;
     padding-left: 0;
     text-align: justify;
+    margin-bottom: 0px;
 }
 
 div.alert.alert-warning {
     margin-top: 5px;
+}
+
+span.span-italic {
+    font-style: italic;
 }

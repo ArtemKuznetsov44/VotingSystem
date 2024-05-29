@@ -1,42 +1,149 @@
-.one-instance-card {
-    display:flex;
+.votes-container-classic .one-instance-card {
+    display: flex;
     justify-content: space-between;
     align-items: center;
-    margin: 5px;
+    margin-bottom: 10px;
     border-radius: 10px;
-    padding: 5px;
+    padding: 10px;
+    flex-wrap: wrap;
+    border-bottom: 2px solid var(--nav-color);
+    border-top: 2px solid var(--nav-color);
 }
-.one-instance-card .main-info {
-    flex: 0.7 0.7;
+
+.votes-container-cards {
+    justify-content: center;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 1em;
 }
+
 .one-instance-card .card-time {
-    flex: 0.2 0.2
+    margin-top: 0.5em;
+    padding-top: 10px;
+    border-top: 2px solid var(--nav-color);
+    border-bottom: 2px solid var(--nav-color);
+    padding-bottom: 5px;
+    margin-bottom: 0.5em;
 }
-.one-instance-card .start-voting {
-    flex: 0.1 0.1;
+
+.votes-container-cards .one-instance-card {
+    width: 300px;
+    height: fit-content;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--nav-color);
+    padding: 10px;
+    border-radius: 15px;
+    box-shadow: 0 5px 5px gray;
+
+    .main-info {
+        min-width: 100%;
+    }
+
+    h5 {
+        text-align: center;
+    }
+
+    div.vote-status {
+        display: flex;
+        justify-content: center;
+    }
+}
+
+
+@media (max-width: 550px) {
+    .one-instance-card {
+        display: flex;
+        flex-direction: column;
+        /*align-items: center;*/
+        align-items: center;
+        /*gap: 1em;*/
+
+        h5 {
+            text-align: center;
+        }
+
+        .main-info {
+            min-width: 100%;
+        }
+    }
+}
+
+@media (max-width: 650px) {
+    div.control-panel {
+        visibility: hidden;
+    }
+}
+
+.one-instance-card .main-info {
+    flex: 0.8 0.8;
+}
+
+.one-instance-card button {
+    flex: 0.2 0.2;
     display: flex;
     justify-content: center;
+    align-items: center;
+
 }
 
 a.link-to-instance {
     color: black;
 }
 
-.one-instance-card {
-    pointer-events: none;
-}
-
-.one-instance-card a.link-to-instance {
-    pointer-events: auto;
-}
-
-.one-instance-card a.link-to-instance:hover {
-    color: white;
+a.link-to-instance:hover {
     transition: 0.3s ease;
+    color: var(--hovered-links);
 }
 
-.one-instance-card:hover {
-    background-color: var(--hovered-links);
-    color: white;
-    transition: 0.3s ease;
+div.control-panel {
+    display: flex;
+    align-items: center;
+    margin-left: 10px;
+    gap: 5px;
 }
+
+div.vote-status span {
+    height: 40px;
+    border-radius: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 120px;
+    font-weight: bold;
+}
+
+span.active-status {
+    background-color: #28a745;
+    color: white;
+
+}
+
+span.nonactive-status {
+    background-color: #6c757d;
+    color: white;
+}
+
+
+/*.one-instance-card {*/
+/*    pointer-events: none;*/
+/*}*/
+
+
+/*.one-instance-card a.link-to-instance {*/
+/*    pointer-events: auto;*/
+/*}*/
+
+/*.one-instance-card a.link-to-instance:hover {*/
+/*    color: white;*/
+/*    transition: 0.3s ease;*/
+/*}*/
+
+/*.one-instance-card:hover {*/
+/*    background-color: var(--hovered-links);*/
+/*    color: white;*/
+/*    transition: 0.3s ease;*/
+/*}*/

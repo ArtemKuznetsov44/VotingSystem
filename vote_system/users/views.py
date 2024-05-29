@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model, login
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LogoutView, LoginView
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import CreateView, UpdateView, ListView, DetailView, TemplateView
@@ -26,13 +26,13 @@ class RegistrationView(CreateView):
         user = form.save()
         # Authenticate our user:
         login(self.request, user, backend='django.contrib.auth.backends.ModelBackend')
-        return redirect('home')
+        return redirect('voting-list')
 
 
 class SignInView(LoginView):
     form_class = SignInForm
     template_name = 'users/start_reg_auth/user_login.html'
-    next_page = reverse_lazy('home')
+    next_page = reverse_lazy('voting-list')
 
 
 class ProfileView(LoginRequiredMixin, UpdateView):
@@ -67,6 +67,7 @@ class UsersListView(LoginRequiredMixin, ListView):
 #     model = get_user_model()
 #     form_class =
 
+
 class AnonymousConnectionView(View):
     def get(self, request):
         return render(
@@ -76,15 +77,23 @@ class AnonymousConnectionView(View):
         )
 
     def post(self, request):
-        code = request.POST.get('unique_code', None)
-        if code:
-            anonym_obj = Anonym.objects.get(unique_code=code)
-            if anonym_obj:
-                voting_obj = Voting.objects.get(pk=anonym_obj.voting.pk).url
+        form = AnonymConnectionForm(request.POST)
 
+        if form.is_valid():
+            code = form.cleaned_data['unique_code']
 
+            try:
+                anonym_obj = Anonym.objects.get(unique_code=code)
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['anonym_connection_form'] = AnonymConnectionForm()
-        return context
+                if anonym_obj:
+                    return redirect('active_voting', kwargs={'slug': anonym_obj.voting.url})
+
+            except Anonym.DoesNotExist:
+                print(form)
+                form = AnonymConnectionForm({'unique_code': ''})
+
+                form.add_error(field=None, error='Указанный код не валидный')
+
+        return render(request=request, template_name='users/start_reg_auth/anonym_login.html',
+                      context={'anonym_connection_form': form})
+

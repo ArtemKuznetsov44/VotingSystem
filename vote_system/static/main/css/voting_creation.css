@@ -31,8 +31,29 @@ div#id_users > div > label {
 
 div#id_users > div > label > input {
     margin-right: 5px;
-
 }
+
+div.one-field div.participants-title {
+    font-size: calc(1.275rem + .3vw);
+    margin-bottom: .5rem;
+    border-bottom: 2px solid var(--nav-color);
+    padding-bottom: 10px;
+}
+
+input[type='range'] {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+div.one-row {
+    display:flex;
+    justify-content: space-between;
+}
+
+div.one-row label {
+    flex: 1 1;
+}
+
 /*fieldset > div.bulletins-for-select > label > div.one-bulletin {*/
 /*    display: flex;*/
 /*    align-items: center;*/

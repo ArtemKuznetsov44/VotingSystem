@@ -18,6 +18,9 @@ urlpatterns = [
     path('voting-create/', VotingCreationPage.as_view(), name='voting-create'),
     # path('voting/creation/', VotingCreatePage.as_view(), name='voting_create'),
     path('voting-view/<slug:url>/', VotingShowUpdateAndDeletePage.as_view(), name='voting-detail'),
+    path('voting-online/url=<slug:url>/', ActiveVoting.as_view(), name='active-voting'),
+    path('voting-results/url=<slug:url>', VotingResultView.as_view(), name='voting-result'),
+
 
     path('results/', ResultsListPage.as_view(), name='results-list'),
     # URLs for Users:
@@ -42,5 +45,5 @@ urlpatterns = [
     # path('bulletins/create/', BulletinCreatePage.as_view(), name='bulletin_create'),
 
     # URLs for fetch/ajax actions:
-    path('bulletins-operations/', BulletinsFetchView.as_view(), name='bulletins-operations')
+    path('bulletins-operations/', BulletinsFetchView.as_view(), name='bulletins-operations'),
 ]

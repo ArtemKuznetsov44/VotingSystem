@@ -1,0 +1,35 @@
+.one-bulletin-result {
+    background-color: #b3b4bd;
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+tr.max-percent-row {
+    background-color: var(--selected-color);
+}
+tr.max-percent-row td:last-child{
+    font-weight: bold;
+}
+
+
+table {
+    width: 100%;
+    border: 2px solid var(--nav-color);
+    border-radius: 15px;
+    text-align: center;
+    background-color: white;
+    /*border-collapse: separate !important;*/
+}
+
+table th {
+    background-color: var(--nav-color);
+    color: white;
+    text-align: center;
+    height: 30px;
+}
+
+table td {
+    border: 2px solid black;
+
+}

@@ -1,0 +1,392 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    Active voting
+{% endblock title %}
+
+{% block links %}
+    <link type="text/css" href="{% static 'main/css/active_voting.css' %}" rel="stylesheet">
+{% endblock links %}
+
+{% block content %}
+    <div class="main-vote-content">
+        <div class="title" style="display: flex; align-items: center;">
+              <h2 >{{ vote.title }}</h2>
+              {% if user.is_staff %} 
+                    <a href="#" class="" style="" id="modal-question-add" data-bs-toggle="modal"
+                       data-bs-target="#add_question_ajax">
+                        <svg class="svg-as-btn-normal" xmlns="http://www.w3.org/2000/svg" width="30" height="30"
+                             viewBox="0 0 24 24">
+                            <path fill="black"
+                                  d="M7.5 10.75a.75.75 0 1 1 1.5 0a.75.75 0 0 1-1.5 0m.75 4.75a.75.75 0 1 0 0 1.5a.75.75 0 0 0 0-1.5M3 6.25A3.25 3.25 0 0 1 6.25 3h11.5A3.25 3.25 0 0 1 21 6.25v5.772a6.463 6.463 0 0 0-3.048-1.007A.749.749 0 0 0 17.25 10h-4.5a.75.75 0 0 0 0 1.5h2.246a6.502 6.502 0 0 0-2.974 9.5H6.25A3.25 3.25 0 0 1 3 17.75zm3 4.5a2.25 2.25 0 1 0 4.5 0a2.25 2.25 0 0 0-4.5 0M8.25 14a2.25 2.25 0 1 0 0 4.5a2.25 2.25 0 0 0 0-4.5M6 6.25c0 .414.336.75.75.75h10.5a.75.75 0 0 0 0-1.5H6.75a.75.75 0 0 0-.75.75M23 17.5a5.5 5.5 0 1 0-11 0a5.5 5.5 0 0 0 11 0m-5 .5l.001 2.503a.5.5 0 1 1-1 0V18h-2.505a.5.5 0 0 1 0-1H17v-2.5a.5.5 0 1 1 1 0V17h2.497a.5.5 0 0 1 0 1z"></path>
+                        </svg>
+                    </a>
+              {% endif %}
+        </div>
+{#        {% if user.is_staff %}#}
+{#        <div class="one-field" style="display: flex; gap: 0.5em; align-items: center;">#}
+{#            <label style="margin-bottom: 0;" for="actual-voters-count">Кол-во присутствующих:</label>#}
+{#            <input type="number" max="150" min="1" value="1" id="actual-voters-count" placeholder="1">#}
+{#        </div>#}
+{#        {% endif %}#}
+  
+
+        {% if not user.is_staff %}
+            <div class="active-bulletins">
+                {% for bulletin in for_user_bulletins %}
+                    {% if bulletin.active_status %}
+                        <div class="active-bulletin-form">
+                            <form id="{{ bulletin.pk }}">
+                                <span class="form-message"></span>
+                                <h5>{{ bulletin.question }}</h5>
+                                <!-- Because, we use prefetch_related('answer_set') method for bulletin objects,
+                                Now we don't need to make requests for every bulletin with all() method and get answers,
+                                Now, all answers for all bulletin already in template, and to get answers for current 
+                                bulletin instance -->
+                                {% for answer in bulletin.answer_set.all %}
+                                    <div class="form-check">
+                                        <input {% if bulletin.type == 'single' %} type="radio" {% else %}
+                                                                                  type="checkbox" {% endif %}
+                                                                                  class="form-check-input" name="answer"
+                                                                                  id="answer_{{ forloop.counter }}"                                                     
+                                                                                  value="{{ answer.pk }}">
+                                        <label class="form-check-label"
+                                               for="answer_{{ forloop.counter }}"> {{ answer.text }}</label>
+                                    </div>
+                                {% endfor %}
+                                <hr/>
+                                <button type="button" class="send-form-btn" onclick="send_answers(this)"> Отправить
+                                </button>
+                            </form>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <!-- Only staff user can see current panel: -->
+        {% if user.is_staff %}
+            <div class="admin-panel-only">
+                <!-- RESULTS PREVIEW PANLE PART -->
+                <div class="results-preview">
+                    {% for bulletin_id, inner_dict in results.items %}
+                        <div class="one-bulletin-result-preview" id="bulletin_res_preview_{{ bulletin_id }}">                             
+                            <h5>Бюллетень с ID {{ bulletin_id }}: </h5>
+                            <p style="font-style:italic;">{{ inner_dict.bulletin_question }}</p>
+                            <hr/>
+                            <ol>
+                                {% for answer_id, info_dict in inner_dict.answers_info.items %}
+                                    <li id="answer_{{ answer_id }}">{{ info_dict.answer_text }} - {{ info_dict.votes_count }}</li>
+                                {% endfor %}
+                            </ol>
+                            <hr/>
+                            <div class="total-votes-count" style="text-decoration: underline;">Всего
+                                проголосовало: {{ inner_dict.total_for_bulletin }}</div>
+                        </div>
+                    {% endfor %}
+                </div>
+                
+                <!-- BULLETINS PREVIEW TO MAKE THEM ACTIVE -->
+                <div class="bulletins-container">
+                    {% for bulletin in all_bulletins_for_vote %}
+
+                        <div class="one-bulletin-card">
+                            {% if bulletin.active_status %}
+                                <label class="bulletin-for-select" style="background-color: var(--selected-color);">
+                                <input type="checkbox" name="active" value="{{ bulletin.pk }}" hidden checked>
+                            {% else %}
+                                <label class="bulletin-for-select">
+                                <input type="checkbox" name="active" value="{{ bulletin.pk }}" hidden>
+                            {% endif %}
+
+                            <div class="one-bulletin-context">
+                                <div class="bulletin-question"
+                                     style="white-space: pre-wrap;font-weight: bold;">{{ bulletin.question }}</div>
+                                <div class="bulletin-type" value="{{ bulletin.type }}" style="font-style: italic;">
+                                    Тип вопроса: {% if bulletin.type == 'single' %} Одиночный ответ {% else %}
+                                    Множественный выбор {% endif %}
+                                </div>
+                                <ol class="bulletin-answers">
+                                    {% for answer in bulletin.answer_set.all %}
+                                        <li> {{ answer.text }}</li>
+                                    {% endfor %}
+                                </ol>
+                            </div>
+                            </label>
+                        </div>
+                    {% endfor %}
+                </div>
+                                       
+                <div class="connected-users">
+                    <h3>Подключенные пользователи: <span id="online-count">0</span></h3>
+                    <div class="connected-users-context"></div>
+                </div>
+            </div>
+            <button class="simple-btn simple-btn-center" type="button" id="end-voting-button"> Завершить </button>
+        {% endif %}
+    </div>
+    
+{% if user.is_staff %}
+    {% include 'include/modals/modal_create_bulletins_in_voting.html' %}
+{% endif %}
+
+{% endblock content %}
+
+{% block scripts %}
+    <!-- Current voting url as js-param-code for config WebSocket -->
+    {{ vote.url|json_script:'voting_url' }}
+    {{ vote.pk|json_script:'voting_pk' }}
+    <script src="{% static 'main/js/work_with_modals/csrf_and_cookies.js' %}"></script>
+    <script src="{% static 'main/js/work_with_modals/modal_bulletin_creation.js' %}"></script>
+
+    <!-- Script to create and config our WebSocket and basic event-listeners for it -->
+    {#    <script src="{% static 'main/js/ws_config_and_listeners.js' %}"></script>#}
+    {#    <!-- Handlers for WebSocket events. Called by event-listeners -->#}
+    {#    <script src="{% static 'main/js/handlers_for_ws_events.js' %}"></script>#}
+
+    <script>
+        // WebSocket instance creation code:
+
+        // We in get_context_method in view-class specify the voting instance and then in template with json_script
+        // Django-filter specify it like a JS-script element with name 'voting_url'
+        // Getting the value of 'voting_url' param:
+        const voting_url = JSON.parse(document.getElementById('voting_url').textContent);
+        const voting_pk = JSON.parse(document.getElementById('voting_pk').textContent);
+        
+        // Create the websocket instance with the same re_path url as in routing.py file to connect with consumer.
+        // The main is that we need to use ws:// or wss:// (the last is secured) to create a connection with websocket: 
+        const voteSocket = new WebSocket(
+            'ws://' + // Specify the WebSocket protocol
+            window.location.host + // Returns 127.0.0.1:8000 in our case (the pair ip:port):
+            // Current part is the same as in routing.py file:
+            '/ws/voting-online/url=' + voting_url + '/');
+
+        console.log(voteSocket);
+
+        /* Main logic:
+        1. For every user we create voteSocket instance
+        2. Admin can click on bulletin -> input change it's state -> bulletin ADD into or REMOVE from div for active bulletins
+        3. User has an opportunity to send his bulletin one by one (need to have  'submit' button near the form).
+        */
+
+        let active_bulletins = {};
+
+
+        // Happens when user has been connected:
+        voteSocket.onopen = function (event) {
+            alert('Connection is active!');
+        }
+
+        // Current event happens when our voteSocket get message from consumer (receive it):
+        voteSocket.onmessage = function (event) {
+
+            const data = JSON.parse(event.data);
+            console.log('ON MESSAGE DATA - ', data);
+
+            // CASE when someone connect or disconnect:
+            if ('update_connections' in data) {
+                console.log('Update connections case - ', data['update_connections'])
+                update_connected_users(data['update_connections'])
+            }
+            if ('activate_bulletin' in data) {
+                console.log('Activation making - ', data)
+                display_bulletin_form(data['activate_bulletin']);
+            }
+            if ('deactivate_bulletin' in data) {
+                console.log('Deactivate bulletin -', data)
+                remove_bulletin_form(data['deactivate_bulletin']['bulletin_pk']);
+            }
+            if ('error_answer_saving' in data) {
+                let error_message = data['error_answer_saving']['message']
+                let bulletin_pk = data['error_answer_saving']['bulletin_pk']
+                display_form_error(error_message, bulletin_pk)
+            }
+            if ('success_answer_saving' in data) {
+                // Need to deactivate bulletin, bulletin.pk in current key in data:
+                let answers = data['success_answer_saving']['answers']
+                let bulletin_pk = data['success_answer_saving']['bulletin_pk']
+                // Remove from bulletin form for user from active bulletin's forms:
+                remove_bulletin_form(bulletin_pk);
+                // Update the result previews:
+                update_result_previews(bulletin_pk, answers)
+
+            }
+            if ('finish_message' in data){
+                let message = data['finish_message']
+                finish_vote(message)
+            }
+        }
+
+        voteSocket.onclose = function (event) {
+            console.error('Socket connection has been closed...', event);
+            alert('Ошибка подключения! Данное голосование еще не было начато администратором... ');
+            window.location.href = "{% url 'voting-list' %}";
+        }
+        
+        $('#end-voting-button').on('click', function(){
+            console.log('Data to send - ', {'stop_voting': true});
+            let actual_voters_count_input = $('input#actual-voters-count');
+            /*
+            if (actual_voters_count_input.val() < 2 ){
+                alert('Пожалуйста, укажите корректно количество голосующих')
+            }
+            else  {
+                if (confirm('Вы действительно хотите завершить голосование?')) {
+                    voteSocket.send(JSON.stringify({
+                        'stop_voting': true,
+                        'actual_voters_count': $('input#voters_count').val()
+                    }));
+                }
+            }
+             */
+             
+             if (confirm('Вы действительно хотите завершить голосование?')){
+                 voteSocket.send(JSON.stringify({
+                    'stop_voting': true
+                 }));
+             }
+        });
+
+        $('div.bulletins-container').on('click', 'div.one-bulletin-card label', function(event){
+            // Current event work twice, because when our label in current case is the parent element 
+            // and the control element for input in one time - label like a control element for input.
+            // So when use click on label, current event happens and event on input element happens two:
+            event.preventDefault();
+            // We need to prepare data for sending:
+            let input_element = $(this).find('> input');
+            let bulletin_pk = $(this).find('input').val();
+
+            if ($(input_element).prop('checked')) {
+                $(input_element).prop('checked', false);
+                $(input_element).removeAttr('checked');
+                $(this).css({"background-color": "white"});
+
+            } else {
+                $(input_element).prop('checked', true);
+                $(input_element).attr('checked');
+                $(this).css({"background-color": "var(--selected-color)"});
+            }
+
+            voteSocket.send(JSON.stringify({'bulletin_pk': bulletin_pk}));
+            // console.log('Current input checked state - ', $(input_element).prop('checked'));
+        
+        })
+          
+        function send_answers(button) {
+
+            let form = $(button).closest('form');
+            let bulletin_id = $(form).attr('id');
+            console.log('Bulletin - ', bulletin_id);
+
+            // Find all input elements, which were checked:
+            let checked = $(form).find('input:checked').map(function () {
+                return $(this).val()
+            }).get();
+            console.log('Checked inputs array - ', checked);
+
+
+            if (checked.length === 0) {
+                $(form).find('span').attr('class', 'form-message-warning').text('Нельзя отправить форму без ответов');
+            } else {
+                $(form).find('span').attr('class', 'form-message').text('');
+                let dict_to_send = {
+                    'bulletin_id': bulletin_id,
+                    'answers': checked
+                }
+                console.log('Dict to send - ', dict_to_send)
+                voteSocket.send(JSON.stringify({
+                    'user_bulletin_answers': dict_to_send
+                }))
+            }
+        }
+
+        /**
+         * @param bulletin_data dict: The main bulletin info
+         */
+        function display_bulletin_form(bulletin_data) {
+            // Main element to insert into:
+            let forms_container = $('div.active-bulletins');
+            // Container for one form:
+            let current_form_container = $('<div>').addClass('active-bulletin-form');
+
+            // Create form instance:
+            let form_element = $('<form>').attr('id', bulletin_data['bulletin_pk']);
+            // Add span for form-messages:
+            $(form_element).append('<span>').attr('class', 'form-message');
+            // Add question context to the form:
+            $(form_element).append($('<h5>').text(bulletin_data['question']));
+
+            // Setting the type for inputs in form: 
+            let input_type = bulletin_data['type'] === 'single' ? 'radio' : 'checkbox'
+            // Add inputs into the form with labels for them:
+            $(bulletin_data['answers']).each(function (index, array) {
+                let answers_div = $('<div>').attr('class', 'form-check');
+                $(answers_div).append(
+                    $('<input>').attr('class', 'form-check-input').attr('type', input_type).attr('name', `answer`).attr('id', `answer_${index}`).val(array[0])
+                )
+                $(answers_div).append(
+                    $('<label>').attr('class', 'form-check-label').attr('for', `answer_${index}`).text(array[1])
+                )
+                $(form_element).append(answers_div);
+            })
+
+            $(form_element).append($('<hr/>'));
+            $(form_element).append($('<button>').attr('type', 'button').text('Отправить').attr('class', 'send-form-btn').attr('onclick', 'send_answers(this)'))
+            // Add our form into the current form container:
+            $(current_form_container).append(form_element);
+            // Add container with current form into the main container:
+            $(forms_container.append(current_form_container));
+
+        }
+
+        // Function to deactivate bulletin - remove form element by form id:
+        function remove_bulletin_form(bulletin_pk) {
+            $('div.active-bulletins').find('form[id="' + bulletin_pk + '"]').remove();
+        }
+
+        // Function to update connected users list:
+        function update_connected_users(connected_users_dict) {
+            // connected_users_dict = {user_id: 'ФИO'}
+            let div_to_insert_into = $('div.connected-users-context');
+            console.log(connected_users_dict);
+            $(div_to_insert_into).empty();
+            $('span#online-count').text(Object.keys(connected_users_dict).length); 
+
+            for (let key in connected_users_dict) {
+                $(div_to_insert_into).append($('<div>').attr('class', 'connected-user').text(
+                    `🟢 ID: ${key}; ФИО: ${connected_users_dict[key][0]}; Логин: ${connected_users_dict[key][1]}`
+                )); 
+            }
+
+        }
+        
+        function display_form_error(error_message, bulletin_pk) {
+            $('div.active-bulletins').find('form[id="' + bulletin_pk + '"]').find('span').attr('class', 'form-message-warning').text(error_message)
+        }
+        
+        // Function to update result-previews:
+        function update_result_previews(bulletin_pk, answers) {
+            let preview_container = $(`div#bulletin_res_preview_${bulletin_pk}`);
+            console.log('Update result preview - ', bulletin_pk, answers)
+            
+            // answers = [<answer_id>, <answer_id_2>...]
+            answers.forEach(function(answer_id){
+                let current_answer_text_parts = $(preview_container).find(`li#answer_${answer_id}`).text().trim().split(' - ');
+                let updated_count = parseInt(current_answer_text_parts[1]) + 1;
+                $(preview_container).find(`li#answer_${answer_id}`).text(current_answer_text_parts[0] + ' - ' + updated_count.toString());
+            })
+            
+            let total_votes_count_text_parts = $(preview_container).find('div.total-votes-count').text().trim().split(': ');
+            let updated_count = parseInt(total_votes_count_text_parts[1]) + 1;
+            $(preview_container).find('div.total-votes-count').text(total_votes_count_text_parts[0]+": " + updated_count.toString());
+
+        }
+        
+        function finish_vote(message){
+            alert(message);
+            window.location.href = "{% url 'voting-list' %}";
+        }
+
+    </script>
+{% endblock scripts %}

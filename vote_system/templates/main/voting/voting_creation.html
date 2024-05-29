@@ -65,15 +65,26 @@
             {% if form.users.field.queryset.count == 0 %}
                 <div class="empty-content"> На данный момент нет объектов для добавления 📂</div>
             {% else %}
-                <label class="form-check-label" for="{{ form.users.id_for_label }}"> {{ form.users.label }}:</label>
-                {{ form.users }}
+                <div class="participants-title"> {{ form.users.label }} </div>
+                <div class="users-for-select" style="max-height: 500px; overflow-y:auto; margin-top: 1em;">
+                    {% for user in form.users.field.queryset %}
+                        <div class="form-check" style="margin-bottom: .5rem;">
+                            <input class="form-check-input" type="checkbox" name="users" value="{{ user.pk }}"
+                                   id="id_user_{{ forloop.counter }}"  {% if user in form.users.initial %}
+                                   checked {% endif %}>
+                            <label class="form-check-label"
+                                   for="id_user_{{ forloop.counter }}"> {{ user.last_name }} {{ user.first_name }} {{ user.father_name }}</label>
+                        </div>
+                    {% endfor %}
+                </div>
             {% endif %}
         </div>
 
         <!-- ANONYMS -->
         <div class="one-field box-for-anonyms" {% if form.is_open.value %} hidden {% endif %}>
-            <label for="{{ form.anonyms.id_for_label }}">{{ form.anonyms.label }}</label>
+             <div class="participants-title"> {{ form.anonyms.label }} </div>
             {{ form.anonyms }}
+            
             <p class="current-range-value"> Количество: {{ form.anonyms.initial }} </p>
         </div>
 
@@ -94,19 +105,21 @@
                     </a>
                 </div>
             </div>
+            <!-- Block with bulletins start -->
             <div class="bulletins-for-select">
+            
                 <div class="empty-content" {% if form.bulletins.field.queryset %} hidden {% endif %}>
                     <img src="/static/main/images/empty_content.png" alt="no-content">
                     <h3> На данный момент нет созданных/назначенных бюллетеней </h3>
                 </div>
 
                 {% for bulletin in form.bulletins.field.queryset %}
-                    <div class="one-row" style="display: flex; justify-content: space-between;">
+                    <div class="one-row">
                         {% if bulletin in form.bulletins.initial %}
-                            <label style="flex: 1 1; background-color: lightgreen;">
+                            <label style="background-color: var(--selected-color);">
                             <input type="checkbox" name="bulletins" value="{{ bulletin.id }}" hidden checked>
                         {% else %}
-                            <label style="flex: 1 1; background-color: white;">
+                            <label style="background-color: white;">
                             <input type="checkbox" name="bulletins" value="{{ bulletin.id }}" hidden>
                         {% endif %}
                         <div class="one-bulletin">
@@ -156,11 +169,14 @@
         </div>
     {% endif %}
 
-    {% include 'include/modals/modal_create_bulletins.html' %}
+    {% include 'include/modals/modal_create_bulletins_for_voting.html' %}
 {% endblock content %}
 
 {% block scripts %}
-    <script src="{% static 'main/js/modal_bulletin_creation.js' %}"></script>
+    <!-- Script to prepare cookies to work with POST form in modal: -->
+    <script src="{% static 'main/js/work_with_modals/csrf_and_cookies.js' %}"></script>
+    <!-- Script with main modal-windows functions: -->
+    <script src="{% static 'main/js/work_with_modals/modal_bulletin_creation.js' %}"></script>
     <script src="{% static 'main/js/voting_creation.js' %}"></script>
 {% endblock scripts %}
 

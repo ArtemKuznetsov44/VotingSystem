@@ -47,6 +47,9 @@ class Voting(models.Model):
     description = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    status = models.CharField(max_length=9, default='nonactive',
+                              choices=(('nonactive', 'Неактивно'), ('active', 'Активно'), ('finished', 'Завершено')))
+    actual_voters_count = models.PositiveSmallIntegerField(default=0)
 
     def get_absolute_url(self):
         return reverse('voting-detail', kwargs={'url': self.url})
@@ -61,6 +64,7 @@ class Bulletin(models.Model):
     question = models.TextField()
     type = models.CharField(max_length=8, choices=(('multiple', 'Множественный выбор'), ('single', 'Одиночный ответ')),
                             default='single')
+    active_status = models.BooleanField(default=False, blank=True)
 
     # answers = models.ManyToManyField(to='Answer', related_name='bulletin_answers')
 
@@ -85,7 +89,7 @@ class UserBulletinAnswer(models.Model):
     answer = models.ForeignKey(to="Answer", on_delete=models.PROTECT)
 
     class Meta:
-        unique_together = ('bulletin', 'answer')
+        unique_together = ('bulletin', 'user', 'answer')
 
 
 class AnonymBulletinAnswer(models.Model):

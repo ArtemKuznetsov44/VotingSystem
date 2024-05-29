@@ -55,13 +55,11 @@
 
             <div class="alert alert-success d-none w-90" role="alert">
             </div>
+        
             <div class="modal-footer">
-                <button id="cancel-btn" type="button" data-bs-dismiss="modal" style="padding: 0; margin-bottom: 5px;">
-                    Отмена
-                </button>
-                <button class="send-form-btn" style="padding: 0; margin-bottom: 5px;" type="submit">
-                    Создать
-                </button>
+                {% block buttons %}
+                    <!-- Place to include different buttons -->
+                {% endblock buttons %}
             </div>
 
         </div>
