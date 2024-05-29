@@ -27,3 +27,9 @@ def get_menu(current_user):
     return {'main_menu': [menu[0], menu[1]] if not current_user.is_staff else menu, 'user': current_user}
 
 
+@register.filter
+def index(sequence, position):
+    try:
+        return sequence[position]
+    except IndexError:
+        return None

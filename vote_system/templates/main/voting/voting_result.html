@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% load static main_tags %}
+
+{% block title %}
+    Результаты
+{% endblock title %}
+
+{% block links %}
+    <link type="text/css" href="{% static 'main/css/voting_result.css' %}" rel="stylesheet">
+{% endblock links %}
+
+{% block content %}
+
+    <div class="title" style="display: flex; align-items: center;">
+        <h2>{{ current_vote.title }}</h2>
+    </div>
+
+    <div class="results">
+        {% for bulletin_pk, bulletin_data in results.items %}
+            <div class="one-bulletin-result">
+                <h5>Бюллетень с ID {{ bulletin_pk }}: <span style="font-style:italic;">{{ bulletin_data.question }}</span></h5> 
+                <table class="result-table">
+                    <thead>
+                    <tr>
+                        <th>Вариант ответа</th>
+                        <th>Кол-во голосов, шт.</th>
+                        <th>Процент, %</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for answer_pk, answer_dict in bulletin_data.answers_info.items %}
+                        <tr {% if answer_dict.percent|index:1 %} class="max-percent-row" {% endif %}>
+                            <td>{{ answer_dict.answer_text }}</td>
+                            <td>{{ answer_dict.votes_count }}</td>
+                            <td>{{ answer_dict.percent|index:0 }}%</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                <hr/>
+                <button type="button" class="simple-btn simple-btn-center more-info"> Подробней ▲</button>
+                <div class="users-with-votes-container" style="display:none;">
+                    <p style="font-weight: bold;"> Голосова участников:</p>
+                    <table class="users-with-votes-table">
+                        <thead>
+                        <tr>
+                            <th>ФИО</th>
+                            <th>Голос</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for user_first_name, user_last_name, user_father_name, answer_text in bulletin_data.users_and_votes %}
+                            <tr>
+                                <td>{{ user_last_name }} {{ user_first_name }} {{ user_father_name }}</td>
+                                <td>{{ answer_text }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    <ol>
+
+                    </ol>
+                </div>
+            </div>
+
+        {% endfor %}
+    </div>
+
+{% endblock content %}
+
+{% block scripts %}
+    <script src="{% static 'main/js/voting_result.js' %}"></script>
+{% endblock scripts %}

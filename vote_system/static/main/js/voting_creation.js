@@ -17,13 +17,13 @@ $(function ($) {
     });
 
     // Function to update value under input with range type for anonymous:
-    $('input[type="range"]').on('change', function(){
+    $('input[type="range"]').on('change', function () {
         let p = $(this).next();
         $(p).text('Количество: ' + this.value);
     });
 
     // Function where we use the click on label like/instead the click on input with checkbox type:
-    $('fieldset > div.bulletins-for-select > div.one-row > label').on('click', function () {
+    $('fieldset > div.bulletins-for-select').on('click', 'div.one-row > label', function () {
         let input_element = $(this).find('input[type="checkbox"]')[0];
         if ($(input_element).prop('checked')) {
 
@@ -43,12 +43,12 @@ $(function ($) {
             console.log('AFTER - ', $(input_element).prop('checked'));
             $(input_element).attr('checked')
             $(this).css({
-                'background-color': 'lightgreen',
+                'background-color': 'var(--selected-color)',
             })
         }
     });
 
-    $('svg.svg-as-btn-delete').on('click', function() {
+    $('div.bulletins-for-select').on('click','svg.svg-as-btn-delete', function () {
 
         let bulletin_id_for_delete = $(this).prev('label').find('input[type="checkbox"]').attr('value');
         let div_element_for_remove = $(this).closest('div.one-row')
@@ -59,26 +59,25 @@ $(function ($) {
 
         if (confirm_res) {
             fetch($('div.modal-body > div.one-form > form').attr('action'), {
-            method: 'DELETE',
-            headers: {
-                'X-CSRFToken': getCookiesByName('csrftoken'),
-                'Content-Type': 'application/json',
-                'accept': 'application/json'
-            },
-            body: JSON.stringify({'to_delete': bulletin_id_for_delete})
-        })
-            .then(response => {
-                console.log(response);
-                div_element_for_remove.remove();
-                let bulletins_selection_container = $('div.bulletins-for-select');
-                console.log('Length - ', bulletins_selection_container.children().length)
-                if (bulletins_selection_container.children().length === 1) {
-                    $(bulletins_selection_container).find('div.empty-content').prop('hidden', false);
-                }
+                method: 'DELETE',
+                headers: {
+                    'X-CSRFToken': getCookiesByName('csrftoken'),
+                    'Content-Type': 'application/json',
+                    'accept': 'application/json'
+                },
+                body: JSON.stringify({'to_delete': bulletin_id_for_delete})
             })
-            .catch(error => console.log(error))
+                .then(response => {
+                    console.log(response);
+                    div_element_for_remove.remove();
+                    let bulletins_selection_container = $('div.bulletins-for-select');
+                    console.log('Length - ', bulletins_selection_container.children().length)
+                    if (bulletins_selection_container.children().length === 1) {
+                        $(bulletins_selection_container).find('div.empty-content').prop('hidden', false);
+                    }
+                })
+                .catch(error => console.log(error))
         }
-
     });
 
 });

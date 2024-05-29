@@ -2,7 +2,8 @@ from datetime import date
 from django import forms
 from django.contrib.auth import get_user_model, login
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from django.core.validators import MinValueValidator, EmailValidator, MinLengthValidator, MaxValueValidator
+from django.core.validators import MinValueValidator, EmailValidator, MinLengthValidator, MaxValueValidator, \
+    MaxLengthValidator
 
 from .models import *
 from django.forms.widgets import *
@@ -12,48 +13,70 @@ from main.models import Anonym
 
 class RegistrationForm(UserCreationForm):
     username = forms.CharField(
-        max_length=30, label='Логин',
+        label='Логин',
         widget=TextInput(
             attrs={'class': 'form-control'}
-        )
+        ),
+        validators=[
+            MinLengthValidator(limit_value=8, message='Логин слишком короткий'),
+            MaxLengthValidator(limit_value=30, message='Логин слишком длинный')
+        ]
     )
 
     first_name = forms.CharField(
-        max_length=30, label='Имя',
+        label='Имя',
         widget=TextInput(
             attrs={'class': 'form-control'}
-        )
+        ),
+        validators=[
+            MinLengthValidator(limit_value=2, message='Имя слишком короткое'),
+            MaxLengthValidator(limit_value=50, message='Имя слишком длинное')
+        ]
+
     )
 
     last_name = forms.CharField(
-        max_length=30, label='Фамилия',
+        label='Фамилия',
         widget=TextInput(
             attrs={'class': 'form-control'}
-        )
+        ),
+        validators=[
+            MinLengthValidator(limit_value=2, message='Фамилия слишком короткая'),
+            MaxLengthValidator(limit_value=50, message='Фамилия слишком длинная'),
+        ]
     )
 
     father_name = forms.CharField(
-        max_length=30, label='Отчество',
+        label='Отчество',
         widget=TextInput(
             attrs={'class': 'form-control'}
-        )
+        ),
+        validators=[
+            MinLengthValidator(limit_value=2, message='Отчество слишком короткое'),
+            MaxLengthValidator(limit_value=30, message='Отчество слишком длинное')
+        ]
     )
 
     email = forms.EmailField(
+        label='E-mail',
         required=False,
         widget=forms.EmailInput(
             attrs={'class': 'form-control'}
         ),
-        validators=[EmailValidator(message='Введенный E-mail не валидный')]
-
+        validators=[
+            EmailValidator(message='Введенный E-mail не валидный'),
+            MinLengthValidator(limit_value=5, message='E-mail слишком короткий')
+        ]
     )
 
     phone = forms.CharField(
-        max_length=16, label='Телефон',
+        label='Телефон',
+        max_length=16,
         min_length=16,
-        # widget=forms.(
-        #     attrs={'class': 'form-control', 'placeholder': '+7-9XX-XX-XX'}
-        # )
+        validators=[
+            MinLengthValidator(limit_value=16, message='Не верный формат телефона'),
+            MaxLengthValidator(limit_value=16, message='Не верный формат телефона')
+        ]
     )
 
     date_of_birth = forms.DateField(
@@ -70,7 +93,11 @@ class RegistrationForm(UserCreationForm):
         min_length=8,
         widget=forms.PasswordInput(
             attrs={'class': 'form-control', 'type': 'password'}
-        )
+        ),
+        validators=[
+            MinLengthValidator(limit_value=8, message='Пароль должен состоять минимум из 8 символов'),
+            MaxLengthValidator(limit_value=18, message='Длина пароле не должна быть более 18 символов')
+        ]
     )
 
     password2 = forms.CharField(
@@ -165,6 +192,7 @@ class UserUpdateForm(forms.ModelForm):
     )
 
     phone = forms.CharField(
+        label='Телефон',
         max_length=30,
         required=True,
         widget=forms.TextInput(
@@ -173,6 +201,7 @@ class UserUpdateForm(forms.ModelForm):
     )
 
     email = forms.EmailField(
+        label='E-mail',
         required=False,
         widget=forms.EmailInput(
             attrs={'class': 'form-control'}

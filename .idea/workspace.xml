@@ -1,0 +1,351 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="71a1f99e-b47c-49cf-9ce8-7f09da459389" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/vote_system/main/consumer.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vote_system/main/migrations/0003_voting_status.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vote_system/main/migrations/0004_voting_actual_voters_count.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vote_system/main/routing.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vote_system/media/uploads/Daniil/profile-img/IMG_20240424_022013.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vote_system/static/main/css/active_voting.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vote_system/static/main/css/voting_result.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vote_system/static/main/js/handlers_for_ws_events.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vote_system/static/main/js/voting_list.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vote_system/static/main/js/voting_result.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vote_system/static/main/js/work_with_modals/csrf_and_cookies.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vote_system/static/main/js/ws_config_and_listeners.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vote_system/templates/include/modals/modal_create_bulletins_for_voting.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vote_system/templates/include/modals/modal_create_bulletins_in_voting.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vote_system/templates/main/voting/active_vote.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vote_system/templates/main/voting/voting_result.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vote_system/main/migrations/0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/vote_system/main/migrations/0001_initial.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vote_system/main/migrations/0002_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/vote_system/main/migrations/0002_initial.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vote_system/main/migrations/0003_alter_answer_text.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/vote_system/main/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/vote_system/main/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vote_system/main/templatetags/main_tags.py" beforeDir="false" afterPath="$PROJECT_DIR$/vote_system/main/templatetags/main_tags.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vote_system/main/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/vote_system/main/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vote_system/main/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/vote_system/main/utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vote_system/main/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/vote_system/main/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vote_system/static/css/base.css" beforeDir="false" afterPath="$PROJECT_DIR$/vote_system/static/css/base.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vote_system/static/css/global.css" beforeDir="false" afterPath="$PROJECT_DIR$/vote_system/static/css/global.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vote_system/static/main/css/for_list_pages.css" beforeDir="false" afterPath="$PROJECT_DIR$/vote_system/static/main/css/for_list_pages.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vote_system/static/main/css/voting_creation.css" beforeDir="false" afterPath="$PROJECT_DIR$/vote_system/static/main/css/voting_creation.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vote_system/static/main/js/modal_bulletin_creation.js" beforeDir="false" afterPath="$PROJECT_DIR$/vote_system/static/main/js/work_with_modals/modal_bulletin_creation.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vote_system/static/main/js/voting_creation.js" beforeDir="false" afterPath="$PROJECT_DIR$/vote_system/static/main/js/voting_creation.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vote_system/static/users/css/reg_and_login.css" beforeDir="false" afterPath="$PROJECT_DIR$/vote_system/static/users/css/reg_and_login.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vote_system/templates/include/modals/modal_create_bulletins.html" beforeDir="false" afterPath="$PROJECT_DIR$/vote_system/templates/include/modals/modal_base.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vote_system/templates/main/voting/voting_creation.html" beforeDir="false" afterPath="$PROJECT_DIR$/vote_system/templates/main/voting/voting_creation.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vote_system/templates/main/voting/voting_list.html" beforeDir="false" afterPath="$PROJECT_DIR$/vote_system/templates/main/voting/voting_list.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vote_system/templates/users/start_reg_auth/anonym_login.html" beforeDir="false" afterPath="$PROJECT_DIR$/vote_system/templates/users/start_reg_auth/anonym_login.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vote_system/users/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/vote_system/users/forms.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vote_system/users/migrations/0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/vote_system/users/migrations/0001_initial.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vote_system/users/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/vote_system/users/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vote_system/vote_system/asgi.py" beforeDir="false" afterPath="$PROJECT_DIR$/vote_system/vote_system/asgi.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vote_system/vote_system/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/vote_system/vote_system/settings.py" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="DjangoConsoleOptions" custom-start-script="import sys; print('Python %s on %s' % (sys.version, sys.platform))&#10;import django; print('Django %s' % django.get_version())&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;if 'setup' in dir(django): django.setup()&#10;import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)">
+    <option name="myCustomStartScript" value="import sys; print('Python %s on %s' % (sys.version, sys.platform))&#10;import django; print('Django %s' % django.get_version())&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;if 'setup' in dir(django): django.setup()&#10;import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+        <option value="HTML File" />
+        <option value="CSS File" />
+        <option value="JavaScript File" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/venv/lib/python3.10/site-packages/channels/auth.py" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/venv/lib/python3.10/site-packages/channels/generic/websocket.py" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/venv/lib/python3.10/site-packages/channels_redis/core.py" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/venv/lib/python3.10/site-packages/django/views/generic/edit.py" root0="SKIP_INSPECTION" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 5
+}</component>
+  <component name="ProjectId" id="2dSs9XvcgC5wCiDtgt6LlOfKndV" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
+    &quot;Python.VotingConfig.executor&quot;: &quot;Debug&quot;,
+    &quot;Python.VotingSystem.executor&quot;: &quot;Debug&quot;,
+    &quot;RunOnceActivity.OpenDjangoStructureViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.pycharm.django.structure.promotion.once.per.project&quot;: &quot;true&quot;,
+    &quot;django.template.preview.state&quot;: &quot;SHOW_EDITOR&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;vote__system-7&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/artem/Documents/PythonProjects/VotingSystem&quot;,
+    &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.keymap&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  },
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;postgresql&quot;
+    ]
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/vote_system/static/main/js/work_with_modals" />
+      <recent name="$PROJECT_DIR$/vote_system/static/main/css" />
+      <recent name="$PROJECT_DIR$/vote_system/static/css" />
+      <recent name="$PROJECT_DIR$/vote_system/static" />
+      <recent name="$PROJECT_DIR$/vote_system/templates" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="VotingSystem" type="PythonConfigurationType" factoryName="Python">
+      <module name="VotingSystem" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="SDK_NAME" value="Python 3.10 (VotingSystem) (2)" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/vote_system/vote_system" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/vote_system/manage.py" />
+      <option name="PARAMETERS" value="runserver 192.168.0.121:8000" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-1d06a55b98c1-91d5c284f522-JavaScript-PY-241.15989.155" />
+        <option value="bundled-python-sdk-babbdf50b680-7c6932dee5e4-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-241.15989.155" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="71a1f99e-b47c-49cf-9ce8-7f09da459389" name="Changes" comment="" />
+      <created>1710012664471</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1710012664471</updated>
+      <workItem from="1710012667051" duration="117000" />
+      <workItem from="1710061110744" duration="882000" />
+      <workItem from="1710077595319" duration="2984000" />
+      <workItem from="1710232433713" duration="3000" />
+      <workItem from="1710749234584" duration="1077000" />
+      <workItem from="1710852741102" duration="1548000" />
+      <workItem from="1711181188442" duration="3180000" />
+      <workItem from="1711221772680" duration="5258000" />
+      <workItem from="1711264304025" duration="4734000" />
+      <workItem from="1711271865269" duration="1013000" />
+      <workItem from="1711290378501" duration="5745000" />
+      <workItem from="1711307132868" duration="2150000" />
+      <workItem from="1711348804970" duration="8119000" />
+      <workItem from="1711363290136" duration="9530000" />
+      <workItem from="1711378882623" duration="5576000" />
+      <workItem from="1711435383145" duration="7286000" />
+      <workItem from="1711447988440" duration="12181000" />
+      <workItem from="1711466285241" duration="6373000" />
+      <workItem from="1711481090495" duration="1712000" />
+      <workItem from="1711526009335" duration="2243000" />
+      <workItem from="1711539024800" duration="6731000" />
+      <workItem from="1711622313080" duration="6423000" />
+      <workItem from="1711650603854" duration="2842000" />
+      <workItem from="1711695417771" duration="5986000" />
+      <workItem from="1711708946145" duration="1211000" />
+      <workItem from="1711710178411" duration="7917000" />
+      <workItem from="1711732350860" duration="4661000" />
+      <workItem from="1711779179454" duration="7205000" />
+      <workItem from="1711807194764" duration="4962000" />
+      <workItem from="1711827483875" duration="2595000" />
+      <workItem from="1711872282615" duration="2504000" />
+      <workItem from="1711895084589" duration="883000" />
+      <workItem from="1711896586428" duration="1266000" />
+      <workItem from="1711908266640" duration="5235000" />
+      <workItem from="1711953302753" duration="7243000" />
+      <workItem from="1711973485200" duration="4179000" />
+      <workItem from="1711993253814" duration="4143000" />
+      <workItem from="1711999298896" duration="1195000" />
+      <workItem from="1712042570408" duration="2576000" />
+      <workItem from="1712046333583" duration="468000" />
+      <workItem from="1712046824765" duration="185000" />
+      <workItem from="1712047070793" duration="268000" />
+      <workItem from="1712047351457" duration="70000" />
+      <workItem from="1712053776022" duration="9982000" />
+      <workItem from="1712126442757" duration="3288000" />
+      <workItem from="1712129797725" duration="57000" />
+      <workItem from="1712129863080" duration="3708000" />
+      <workItem from="1712149943524" duration="6794000" />
+      <workItem from="1712171034507" duration="2972000" />
+      <workItem from="1712212500865" duration="4425000" />
+      <workItem from="1712231198794" duration="3746000" />
+      <workItem from="1712255190014" duration="3926000" />
+      <workItem from="1712300189126" duration="5613000" />
+      <workItem from="1712313662526" duration="9313000" />
+      <workItem from="1712405864288" duration="1243000" />
+      <workItem from="1712426647383" duration="3807000" />
+      <workItem from="1712478260341" duration="1672000" />
+      <workItem from="1712558350495" duration="5866000" />
+      <workItem from="1712576685299" duration="6933000" />
+      <workItem from="1712598763058" duration="3056000" />
+      <workItem from="1712646628212" duration="6202000" />
+      <workItem from="1712658221508" duration="9802000" />
+      <workItem from="1712692841771" duration="536000" />
+      <workItem from="1712728170518" duration="5691000" />
+      <workItem from="1712736228199" duration="2404000" />
+      <workItem from="1712746096611" duration="7654000" />
+      <workItem from="1713621718155" duration="744000" />
+      <workItem from="1713622471186" duration="354000" />
+      <workItem from="1713622916394" duration="290000" />
+      <workItem from="1713623216963" duration="4183000" />
+      <workItem from="1713639610930" duration="2006000" />
+      <workItem from="1713707282055" duration="5889000" />
+      <workItem from="1713722027628" duration="2084000" />
+      <workItem from="1713768312333" duration="5336000" />
+      <workItem from="1713782049126" duration="5052000" />
+      <workItem from="1713816044479" duration="3000" />
+      <workItem from="1713877064944" duration="2669000" />
+      <workItem from="1713899141731" duration="528000" />
+      <workItem from="1713939858499" duration="5468000" />
+      <workItem from="1713957969977" duration="11575000" />
+      <workItem from="1713984508001" duration="3897000" />
+      <workItem from="1714027802814" duration="4914000" />
+      <workItem from="1714045326089" duration="2367000" />
+      <workItem from="1714048330294" duration="701000" />
+      <workItem from="1714142885915" duration="2983000" />
+      <workItem from="1714199383686" duration="7769000" />
+      <workItem from="1714213868329" duration="2843000" />
+      <workItem from="1714246552671" duration="1499000" />
+      <workItem from="1714292540067" duration="3752000" />
+      <workItem from="1714303133669" duration="3893000" />
+      <workItem from="1714488914256" duration="2066000" />
+      <workItem from="1714501305342" duration="5323000" />
+      <workItem from="1714547187119" duration="638000" />
+      <workItem from="1714549404228" duration="231000" />
+      <workItem from="1714550005985" duration="120000" />
+      <workItem from="1714550164671" duration="80000" />
+      <workItem from="1714550364204" duration="723000" />
+      <workItem from="1714552871477" duration="712000" />
+      <workItem from="1714554386410" duration="41000" />
+      <workItem from="1714554435883" duration="25000" />
+      <workItem from="1714554938008" duration="332000" />
+      <workItem from="1714555373821" duration="209000" />
+      <workItem from="1714555592409" duration="46000" />
+      <workItem from="1714569608501" duration="11000" />
+      <workItem from="1714569657087" duration="67000" />
+      <workItem from="1714569732276" duration="5625000" />
+      <workItem from="1714588057937" duration="4675000" />
+      <workItem from="1714637910981" duration="2036000" />
+      <workItem from="1714648298849" duration="7194000" />
+      <workItem from="1714720219333" duration="2274000" />
+      <workItem from="1714723750493" duration="1217000" />
+      <workItem from="1714813730647" duration="1845000" />
+      <workItem from="1714837952471" duration="1509000" />
+      <workItem from="1714895964651" duration="3038000" />
+      <workItem from="1714908230189" duration="3905000" />
+      <workItem from="1714926197635" duration="2911000" />
+      <workItem from="1714937198855" duration="3271000" />
+      <workItem from="1714976406560" duration="8169000" />
+      <workItem from="1714991821735" duration="2864000" />
+      <workItem from="1714996593642" duration="899000" />
+      <workItem from="1714997623895" duration="3200000" />
+      <workItem from="1715150865055" duration="6495000" />
+      <workItem from="1715331111608" duration="2509000" />
+      <workItem from="1715366743692" duration="7275000" />
+      <workItem from="1715414119369" duration="4560000" />
+      <workItem from="1715431586669" duration="4281000" />
+      <workItem from="1715454135319" duration="2238000" />
+      <workItem from="1715505395157" duration="3295000" />
+      <workItem from="1715538036402" duration="5543000" />
+      <workItem from="1715581651567" duration="6373000" />
+      <workItem from="1715667939425" duration="1052000" />
+      <workItem from="1715669081813" duration="7000000" />
+      <workItem from="1715684729720" duration="4031000" />
+      <workItem from="1715756496041" duration="980000" />
+      <workItem from="1715770269175" duration="7133000" />
+      <workItem from="1715843865352" duration="5592000" />
+      <workItem from="1715855851072" duration="6524000" />
+      <workItem from="1715891333513" duration="55000" />
+      <workItem from="1715936204043" duration="273000" />
+      <workItem from="1715942635569" duration="7182000" />
+      <workItem from="1716188147292" duration="7059000" />
+      <workItem from="1716201812270" duration="2203000" />
+      <workItem from="1716207724235" duration="1153000" />
+      <workItem from="1716319566364" duration="3599000" />
+      <workItem from="1716362322019" duration="5435000" />
+      <workItem from="1716373636665" duration="7987000" />
+      <workItem from="1716448404567" duration="5305000" />
+      <workItem from="1716460019606" duration="5174000" />
+      <workItem from="1716491400420" duration="3139000" />
+      <workItem from="1716533517526" duration="7374000" />
+      <workItem from="1716547360881" duration="6827000" />
+      <workItem from="1716711257127" duration="1368000" />
+      <workItem from="1716754692600" duration="1150000" />
+      <workItem from="1716791787425" duration="6243000" />
+      <workItem from="1716971718774" duration="4201000" />
+      <workItem from="1717009835038" duration="5007000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="XDebuggerManager">
+    <watches-manager>
+      <configuration name="PythonConfigurationType">
+        <watch expression="request.user" />
+      </configuration>
+    </watches-manager>
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/VotingSystem$VotingConfig.coverage" NAME="VotingConfig Coverage Results" MODIFIED="1712582078503" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/vote_system" />
+    <SUITE FILE_PATH="coverage/VotingSystem$VotingSystem.coverage" NAME="VotingSystem Coverage Results" MODIFIED="1717015467150" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/vote_system/vote_system" />
+  </component>
+</project>

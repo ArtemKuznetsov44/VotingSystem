@@ -1,8 +1,15 @@
 :root {
-    --nav-color: #171717;
+    --nav-color: #141619;
     --main-color: #212121; 
     --hovered-links: #0072c6 !important;
     --footer-color: #212121;
     --cancel-btn-color: rgb(255, 0, 0);
     --form-send-btn-color: green;
+    --selected-color: #0cd60c;
+    --card-background: #b3b4bd;
+
+    /*--warnging-back-color: #842029;*/
+    /*--wargning-color: #ea868f;*/
+    /*--success-back-color: #051b11;*/
+    /*--success-color: #75b798;*/
 }
