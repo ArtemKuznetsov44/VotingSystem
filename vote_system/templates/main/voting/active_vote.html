@@ -82,7 +82,7 @@
                             </ol>
                             <hr/>
                             <div class="total-votes-count" style="text-decoration: underline;">Всего
-                                проголосовало: {{ inner_dict.total_for_bulletin }}</div>
+                                проголосовало: {{ inner_dict.total_count }}</div>
                         </div>
                     {% endfor %}
                 </div>
@@ -154,13 +154,39 @@
         const voting_url = JSON.parse(document.getElementById('voting_url').textContent);
         const voting_pk = JSON.parse(document.getElementById('voting_pk').textContent);
         
+        // ?param_1=value_1&param_2=value_2...
+        let query_string = window.location.search;
+        // URLSearchParams - function to parse query_sting and make the dict with them:
+        let url_params = new URLSearchParams(query_string);
+        
+        let voteSocket = null;
+        if (url_params && url_params.has('unique_code')){ 
+            voteSocket = new WebSocket(
+            'ws://' + // Specify the WebSocket protocol
+            window.location.host + // Returns 127.0.0.1:8000 in our case (the pair ip:port):
+            // Current part is the same as in routing.py file:
+            '/ws/voting-online/url=' + voting_url + '/' + '?unique_code=' + url_params.get('unique_code'));
+        }
+        else {
+            voteSocket = new WebSocket(
+            'ws://' + // Specify the WebSocket protocol
+            window.location.host + // Returns 127.0.0.1:8000 in our case (the pair ip:port):
+            // Current part is the same as in routing.py file:
+            '/ws/voting-online/url=' + voting_url + '/');
+        }
+            
+        
+        
         // Create the websocket instance with the same re_path url as in routing.py file to connect with consumer.
         // The main is that we need to use ws:// or wss:// (the last is secured) to create a connection with websocket: 
+        /*
         const voteSocket = new WebSocket(
             'ws://' + // Specify the WebSocket protocol
             window.location.host + // Returns 127.0.0.1:8000 in our case (the pair ip:port):
             // Current part is the same as in routing.py file:
             '/ws/voting-online/url=' + voting_url + '/');
+            
+         */
 
         console.log(voteSocket);
 
@@ -171,7 +197,6 @@
         */
 
         let active_bulletins = {};
-
 
         // Happens when user has been connected:
         voteSocket.onopen = function (event) {
