@@ -138,18 +138,26 @@ class SignInForm(AuthenticationForm):
     )
 
 
-class AnonymConnectionForm(forms.ModelForm):
-    class Meta:
-        model = Anonym
-        fields = ('unique_code',)
-        labels = {
-            'unique_code': 'Ваш код'
-        }
-        widgets = {
-            'unique_code': forms.TextInput(
-                attrs={'class': 'form-control'}
-            )
-        }
+class AnonymConnectionForm(forms.Form):
+    unique_code = forms.CharField(
+        label='Ваш код',
+        widget=forms.TextInput(
+            attrs={'class': 'form-control'},
+        ),
+        validators=[MaxLengthValidator(limit_value=15, message='Введенный код слишком короткий')]
+
+    )
+    # class Meta:
+    #     model = Anonym
+    #     fields = ('unique_code',)
+    #     labels = {
+    #         'unique_code': 'Ваш код'
+    #     }
+    #     widgets = {
+    #         'unique_code': forms.TextInput(
+    #             attrs={'class': 'form-control'}
+    #         )
+    #     }
 
 
 class UserUpdateForm(forms.ModelForm):

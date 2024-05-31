@@ -2,10 +2,11 @@ import json
 from asgiref.sync import async_to_sync
 from collections import namedtuple
 from channels.generic.websocket import WebsocketConsumer
+from django.contrib.auth import get_user_model
 from django.http.response import HttpResponseBadRequest
 from django.shortcuts import get_object_or_404
 
-from .models import Bulletin, UserBulletinAnswer, Voting
+from .models import Bulletin, UserBulletinAnswer, Voting, Anonym
 from django.core.exceptions import ObjectDoesNotExist
 
 # Logic:
@@ -19,6 +20,7 @@ class VoteConsumer(WebsocketConsumer):
     Consumer = namedtuple('Consumer', ['human_name', 'username', 'channel_name'])
     consumers = {}
     admins = {}
+    anonyms = {}
     current_voting = None
 
     @classmethod
@@ -27,38 +29,36 @@ class VoteConsumer(WebsocketConsumer):
 
     def connect(self):
         user = self.scope['user']
+        print('USER - ', type(user))
 
         # Prepare two groups with different name:
         self.vote_group_as_name = self.scope['url_route']['kwargs']['vote_url']
-        # self.vote_group_as_name_for_admins = self.vote_group_as_name_for_all + '_admins'
+        # # self.vote_group_as_name_for_admins = self.vote_group_as_name_for_all + '_admins'
 
-        if user.is_staff:
-            self.set_current_voting(Voting.objects.get(url=self.vote_group_as_name))
+        if isinstance(user, get_user_model()):
 
-            if self.current_voting.status != 'active':
-                self.current_voting.status = 'active'
-                self.current_voting.save()
+            if user.is_staff:
+                self.set_current_voting(Voting.objects.get(url=self.vote_group_as_name))
 
-            self.admins[str(user.pk)] = self.Consumer(
-                f'{user.last_name} {user.first_name} {user.father_name}',
-                user.username,
-                self.channel_name
-            )
-        elif not self.current_voting or self.current_voting.status != 'active':
-            self.close()
+                if self.current_voting.status != 'active':
+                    self.current_voting.status = 'active'
+                    self.current_voting.save()
 
-        print(f"Local - {self.__dict__.get('current_voting', None)}")
-        print(f"For class - {VoteConsumer.__dict__['current_voting']}")
+            elif not self.current_voting or self.current_voting.status != 'active':
+                self.close()
+            else:
+                if str(user.pk) not in self.consumers:
+                    self.consumers[str(user.pk)] = self.Consumer(
+                        f'{user.last_name} {user.first_name} {user.father_name}',
+                        user.username,
+                        self.channel_name
+                    )
+        else:
+            self.anonyms[str(user.pk)] = user.unique_code
 
         # group_add() method in object channel_layer get two arguments: 1 - group_name and 2 - object.channel_name
         async_to_sync(self.channel_layer.group_add)(
             self.vote_group_as_name, self.channel_name
-        )
-
-        self.consumers[str(user.pk)] = self.Consumer(
-            f'{user.last_name} {user.first_name} {user.father_name}',
-            user.username,
-            self.channel_name
         )
 
         self.accept()
@@ -71,7 +71,7 @@ class VoteConsumer(WebsocketConsumer):
 
     def disconnect(self, close_code):
         self.consumers.pop(str(self.scope['user'].pk), None)
-        self.admins.pop(str(self.scope['user'].pk), None)
+        # self.admins.pop(str(self.scope['user'].pk), None)
 
         async_to_sync(self.channel_layer.group_send)(
             self.vote_group_as_name, {

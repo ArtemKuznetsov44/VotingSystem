@@ -17,6 +17,7 @@ class EmailAuthBackend(ModelBackend):
 
     def get_user(self, user_id):
         user_model = get_user_model()
+
         try:
             user = user_model.objects.get(pk=user_id)
         except user_model.DoesNotExist:

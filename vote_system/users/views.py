@@ -86,7 +86,8 @@ class AnonymousConnectionView(View):
                 anonym_obj = Anonym.objects.get(unique_code=code)
 
                 if anonym_obj:
-                    return redirect('active_voting', kwargs={'slug': anonym_obj.voting.url})
+                    redirect_url = reverse('active-voting', kwargs={'url': anonym_obj.voting.url}) + f'?unique_code={anonym_obj.unique_code}'
+                    return redirect(redirect_url)
 
             except Anonym.DoesNotExist:
                 print(form)

@@ -38,7 +38,7 @@ class VotingListPage(LoginRequiredMixin, ListView):
         if self.request.user.is_staff:
             return Voting.objects.all()
 
-        return Voting.objects.filter(userparticipant__user=self.request.user, status='active')
+        return Voting.objects.filter(userparticipant__user=self.request.user, status__in=['active', 'finished'])
 
 
 class VotingCreationPage(StaffRequiredMixin, CreateView):
@@ -415,8 +415,8 @@ class BulletinsFetchView(View):
             )
 
 
-class ActiveVoting(LoginRequiredMixin, TemplateView):
-    login_url = reverse_lazy('users:sign_in')
+class ActiveVoting(TemplateView):
+    # login_url = reverse_lazy('users:sign_in')
     template_name = 'main/voting/active_vote.html'
 
     def get_context_data(self, **kwargs):
